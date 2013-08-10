@@ -30,6 +30,11 @@ if(FREECAD_BUILD_GUI)
         MainGui.cpp
     )
 
+    if(FREECAD_APP_BUNDLE)
+        set_source_files_properties(freecad.icns PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        SET(FreeCAD_SRCS ${FreeCAD_SRCS} freecad.icns)
+    endif(FREECAD_APP_BUNDLE)
+
     if(MSVC)
         SET(FreeCAD_LIBS
             FreeCADGui
@@ -43,6 +48,7 @@ if(FREECAD_BUILD_GUI)
     endif(MSVC)
 
     add_executable(FreeCADMain WIN32 ${FreeCAD_SRCS})
+
     target_link_libraries(FreeCADMain ${FreeCAD_LIBS})
 
     # Note this is IDE specific, not necessarily platform specific
@@ -62,13 +68,22 @@ if(FREECAD_BUILD_GUI)
         set_target_properties(FreeCADMain PROPERTIES INSTALL_RPATH ${INSTALL_RPATH})
     endif(MSVC)
 
+    #Application bundle settings
+    if(FREECAD_APP_BUNDLE)
+        set_target_properties(FreeCADMain PROPERTIES MACOSX_BUNDLE TRUE)
+        SET(MACOSX_BUNDLE_BUNDLE_NAME ${BUNDLE_NAME})
+        SET(MACOSX_BUNDLE_ICON_FILE freecad.icns)
+    endif(FREECAD_APP_BUNDLE)
+
     if(WIN32)
         INSTALL(TARGETS FreeCADMain
             RUNTIME DESTINATION bin
             LIBRARY DESTINATION lib
         )
     else(WIN32)
+        #Install bundle at root of install tree. If no bundle, executable will be in bin as usual.
         INSTALL(TARGETS FreeCADMain 
+            BUNDLE DESTINATION .
             RUNTIME DESTINATION bin
         )
     endif(WIN32)
@@ -110,7 +125,7 @@ if(WIN32)
     )
 else(WIN32)
     INSTALL(TARGETS FreeCADMainCmd 
-        RUNTIME DESTINATION bin
+        RUNTIME DESTINATION ${INSTALL_EXE_DIR}
     )
 endif(WIN32)
 
@@ -152,7 +167,7 @@ if(WIN32)
     )
 else(WIN32)
     INSTALL(TARGETS FreeCADMainPy
-        LIBRARY DESTINATION lib
+        LIBRARY DESTINATION ${INSTALL_LIB_DIR}
     )
 endif(WIN32)
 
@@ -195,7 +210,8 @@ if(FREECAD_BUILD_GUI)
         )
     else(WIN32)
         INSTALL(TARGETS FreeCADGuiPy
-            LIBRARY DESTINATION lib
+            LIBRARY DESTINATION ${INSTALL_LIB_DIR}
         )
     endif(WIN32)
+
 endif(FREECAD_BUILD_GUI)
