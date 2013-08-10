@@ -530,6 +530,7 @@ ENDIF(APPLE)
 #elseif()
 add_subdirectory(src)
 add_subdirectory(data)
+add_subdirectory(bundle)
 #endif()
 
 # ================================================================================
