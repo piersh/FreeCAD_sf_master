@@ -18,5 +18,5 @@ INSTALL(
         PythonQt.py
         Tests.py
     DESTINATION
-        Mod/TemplatePyMod
+        ${INSTALL_MOD_DIR}/TemplatePyMod
 )

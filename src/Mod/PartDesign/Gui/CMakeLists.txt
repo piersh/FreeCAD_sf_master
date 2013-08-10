@@ -205,5 +205,5 @@ else(MSVC)
 endif(MSVC)
 
 # The PartDesign module must go to where the __init__.py file is
-INSTALL(TARGETS PartDesignGui DESTINATION Mod/PartDesign)
+INSTALL(TARGETS PartDesignGui DESTINATION ${INSTALL_MOD_DIR}/PartDesign)
 

@@ -149,97 +149,97 @@ INSTALL(
     FILES
         ${ShipIcons_SRCS}
     DESTINATION
-        Mod/Ship/resources/icons
+        ${INSTALL_MOD_DIR}/Ship/resources/icons
 )
 INSTALL(
     FILES
         ${ShipExamples_SRCS}
     DESTINATION
-        Mod/Ship/resources/examples
+        ${INSTALL_MOD_DIR}/Ship/resources/examples
 )
 INSTALL(
     FILES
         ${ShipOpenCL_SRCS}
     DESTINATION
-        Mod/Ship/resources/opencl
+        ${INSTALL_MOD_DIR}/Ship/resources/opencl
 )
 INSTALL(
     FILES
         ${ShipLoadExample_SRCS}
     DESTINATION
-        Mod/Ship/shipLoadExample
+        ${INSTALL_MOD_DIR}/Ship/shipLoadExample
 )
 INSTALL(
     FILES
         ${ShipCreateShip_SRCS}
     DESTINATION
-        Mod/Ship/shipCreateShip
+        ${INSTALL_MOD_DIR}/Ship/shipCreateShip
 )
 INSTALL(
     FILES
         ${ShipOutlineDraw_SRCS}
     DESTINATION
-        Mod/Ship/shipOutlineDraw
+        ${INSTALL_MOD_DIR}/Ship/shipOutlineDraw
 )
 INSTALL(
     FILES
         ${ShipAreasCurve_SRCS}
     DESTINATION
-        Mod/Ship/shipAreasCurve
+        ${INSTALL_MOD_DIR}/Ship/shipAreasCurve
 )
 INSTALL(
     FILES
         ${ShipHydrostatics_SRCS}
     DESTINATION
-        Mod/Ship/shipHydrostatics
+        ${INSTALL_MOD_DIR}/Ship/shipHydrostatics
 )
 INSTALL(
     FILES
         ${ShipUtils_SRCS}
     DESTINATION
-        Mod/Ship/shipUtils
+        ${INSTALL_MOD_DIR}/Ship/shipUtils
 )
 INSTALL(
     FILES
         ${ShipWeights_SRCS}
     DESTINATION
-        Mod/Ship/tankWeights
+        ${INSTALL_MOD_DIR}/Ship/tankWeights
 )
 INSTALL(
     FILES
         ${ShipCreateTank_SRCS}
     DESTINATION
-        Mod/Ship/tankCreateTank
+        ${INSTALL_MOD_DIR}/Ship/tankCreateTank
 )
 INSTALL(
     FILES
         ${ShipGZ_SRCS}
     DESTINATION
-        Mod/Ship/tankGZ
+        ${INSTALL_MOD_DIR}/Ship/tankGZ
 )
 INSTALL(
     FILES
         ${SimCreate_SRCS}
     DESTINATION
-        Mod/Ship/simCreate
+        ${INSTALL_MOD_DIR}/Ship/simCreate
 )
 INSTALL(
     FILES
         ${SimRun_SRCS}
     DESTINATION
-        Mod/Ship/simRun
+        ${INSTALL_MOD_DIR}/Ship/simRun
 )
 INSTALL(
     FILES
         ${SimPost_SRCS}
     DESTINATION
-        Mod/Ship/simPost
+        ${INSTALL_MOD_DIR}/Ship/simPost
 )
 INSTALL(
     FILES
         ${ShipMain_SRCS}
     DESTINATION
-        Mod/Ship
+        ${INSTALL_MOD_DIR}/Ship
 )
 
 

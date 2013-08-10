@@ -52,4 +52,4 @@ else(MSVC)
     set_target_properties(CompleteGui PROPERTIES INSTALL_RPATH ${INSTALL_RPATH})
 endif(MSVC)
 
-install(TARGETS CompleteGui DESTINATION lib)
+install(TARGETS CompleteGui DESTINATION ${INSTALL_LIB_DIR})

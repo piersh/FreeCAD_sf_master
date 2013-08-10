@@ -924,7 +924,7 @@ if(WIN32)
     )
 else(WIN32)
     INSTALL(TARGETS FreeCADGui
-        LIBRARY DESTINATION lib
+        LIBRARY DESTINATION ${INSTALL_LIB_DIR}
     )
     INSTALL(FILES Icons/freecad.xpm
         Icons/freecad-icon-16.png

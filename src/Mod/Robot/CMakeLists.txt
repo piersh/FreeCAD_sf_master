@@ -13,7 +13,7 @@ INSTALL(
         RobotExample.py
         RobotExampleTrajectoryOutOfShapes.py
     DESTINATION
-        Mod/Robot
+        ${INSTALL_MOD_DIR}/Robot
 )
 
 INSTALL(

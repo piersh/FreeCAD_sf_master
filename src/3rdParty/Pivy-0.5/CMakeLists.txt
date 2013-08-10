@@ -65,8 +65,8 @@ fc_copy_sources(coin "${CMAKE_BINARY_DIR}/bin/pivy"
     sogui.py
 )
 
-install(TARGETS coin DESTINATION bin/pivy)
-install(FILES __init__.py coin.py sogui.py DESTINATION bin/pivy)
+install(TARGETS coin DESTINATION ${INSTALL_EXE_DIR}/pivy)
+install(FILES __init__.py coin.py sogui.py DESTINATION ${INSTALL_EXE_DIR}/pivy)
 
 ########################### SoQtPy ###########################
 
@@ -122,5 +122,5 @@ fc_copy_sources(soqt "${CMAKE_BINARY_DIR}/bin/pivy"
     gui/__init__.py
 )
 
-install(TARGETS soqt DESTINATION bin/pivy/gui)
-install(FILES gui/__init__.py soqt.py DESTINATION bin/pivy/gui)
+install(TARGETS soqt DESTINATION ${INSTALL_EXE_DIR}/pivy/gui)
+install(FILES gui/__init__.py soqt.py DESTINATION ${INSTALL_EXE_DIR}/pivy/gui)

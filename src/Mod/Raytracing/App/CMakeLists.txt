@@ -90,4 +90,4 @@ else(MSVC)
     set_target_properties(Raytracing PROPERTIES INSTALL_RPATH ${INSTALL_RPATH})
 endif(MSVC)
 
-INSTALL(TARGETS Raytracing DESTINATION lib)
+INSTALL(TARGETS Raytracing DESTINATION ${INSTALL_LIB_DIR})

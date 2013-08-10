@@ -9,5 +9,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/Inspection
+        ${INSTALL_MOD_DIR}/Inspection
 )

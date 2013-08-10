@@ -33,5 +33,5 @@ INSTALL(
     FILES
         ${Draft_SRCS}
     DESTINATION
-        Mod/Draft
+        ${INSTALL_MOD_DIR}/Draft
 )

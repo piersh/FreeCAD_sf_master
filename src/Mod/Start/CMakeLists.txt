@@ -10,5 +10,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/Start
+        ${INSTALL_MOD_DIR}/Start
 )

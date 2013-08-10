@@ -198,6 +198,6 @@ if(WIN32)
     )
 else(WIN32)
     INSTALL(TARGETS FreeCADApp
-        LIBRARY DESTINATION lib
+        LIBRARY DESTINATION ${INSTALL_LIB_DIR}
     )
 endif(WIN32)

@@ -56,17 +56,17 @@ INSTALL(
     FILES
         ${IdfLibs_SRCS}
     DESTINATION
-        Mod/Idf/Idflibs
+        ${INSTALL_MOD_DIR}/Idf/Idflibs
 )
 INSTALL(
     FILES
         ${IdfLang_SRCS}
     DESTINATION
-        Mod/Idf/Languages
+        ${INSTALL_MOD_DIR}/Idf/Languages
 )
 INSTALL(
     FILES
         ${Idf_SRCS}
     DESTINATION
-        Mod/Idf
+        ${INSTALL_MOD_DIR}/Idf
 )

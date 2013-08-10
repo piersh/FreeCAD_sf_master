@@ -25,7 +25,7 @@ INSTALL(
     FILES
         ${Test_SRCS}
     DESTINATION
-        Mod/Test
+        ${INSTALL_MOD_DIR}/Test
 )
 
 if(FREECAD_BUILD_GUI)

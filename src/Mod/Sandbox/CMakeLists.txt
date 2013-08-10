@@ -9,5 +9,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/Sandbox
+        ${INSTALL_MOD_DIR}/Sandbox
 )

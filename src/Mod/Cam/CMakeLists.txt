@@ -9,5 +9,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/Cam
+        ${INSTALL_MOD_DIR}/Cam
 )

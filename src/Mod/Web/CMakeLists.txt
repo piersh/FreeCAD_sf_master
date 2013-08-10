@@ -8,5 +8,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/Web
+        ${INSTALL_MOD_DIR}/Web
 )

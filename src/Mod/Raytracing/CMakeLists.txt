@@ -10,7 +10,7 @@ INSTALL(
         InitGui.py
         RaytracingExample.py
     DESTINATION
-        Mod/Raytracing
+        ${INSTALL_MOD_DIR}/Raytracing
 )
 
 INSTALL(

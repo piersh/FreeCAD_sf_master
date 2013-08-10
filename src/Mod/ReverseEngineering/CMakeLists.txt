@@ -9,5 +9,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/ReverseEngineering
+        ${INSTALL_MOD_DIR}/ReverseEngineering
 )

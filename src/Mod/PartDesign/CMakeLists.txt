@@ -12,7 +12,7 @@ INSTALL(
         TestPartDesignApp.py
         TestPartDesignGui.py
     DESTINATION
-        Mod/PartDesign
+        ${INSTALL_MOD_DIR}/PartDesign
 )
 
 INSTALL(
@@ -26,7 +26,7 @@ INSTALL(
         Scripts/RadialCopy.py
         Scripts/Spring.py
     DESTINATION
-        Mod/PartDesign/Scripts
+        ${INSTALL_MOD_DIR}/PartDesign/Scripts
 )
 
 SET(WizardShaft_SRCS
@@ -55,5 +55,5 @@ INSTALL(
     FILES
         ${WizardShaft_SRCS}
     DESTINATION
-        Mod/PartDesign/WizardShaft
+        ${INSTALL_MOD_DIR}/PartDesign/WizardShaft
 )

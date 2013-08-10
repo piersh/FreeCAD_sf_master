@@ -55,4 +55,4 @@ else(MSVC)
     set_target_properties(ReverseEngineering PROPERTIES INSTALL_RPATH ${INSTALL_RPATH})
 endif(MSVC)
 
-INSTALL(TARGETS ReverseEngineering DESTINATION lib)
+INSTALL(TARGETS ReverseEngineering DESTINATION ${INSTALL_LIB_DIR})

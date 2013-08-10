@@ -64,4 +64,4 @@ else(MSVC)
     )
 endif(MSVC)
 
-install(TARGETS ReverseEngineeringGui DESTINATION lib)
+install(TARGETS ReverseEngineeringGui DESTINATION ${INSTALL_LIB_DIR})

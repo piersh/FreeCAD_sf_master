@@ -9,5 +9,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/Complete
+        ${INSTALL_MOD_DIR}/Complete
 )

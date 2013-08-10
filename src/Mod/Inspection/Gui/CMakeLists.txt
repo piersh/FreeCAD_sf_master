@@ -75,4 +75,4 @@ else(MSVC)
     set_target_properties(InspectionGui PROPERTIES INSTALL_RPATH ${INSTALL_RPATH})
 endif(MSVC)
 
-INSTALL(TARGETS InspectionGui DESTINATION lib)
+INSTALL(TARGETS InspectionGui DESTINATION ${INSTALL_LIB_DIR})

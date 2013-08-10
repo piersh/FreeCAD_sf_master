@@ -12,6 +12,6 @@ INSTALL(
         TestSketcherApp.py
         TestSketcherGui.py
     DESTINATION
-        Mod/Sketcher
+        ${INSTALL_MOD_DIR}/Sketcher
 )
 

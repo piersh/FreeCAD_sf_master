@@ -9,5 +9,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/Image
+        ${INSTALL_MOD_DIR}/Image
 )

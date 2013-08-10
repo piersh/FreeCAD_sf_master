@@ -59,43 +59,43 @@ INSTALL(
     FILES
         ${PlotAxes_SRCS}
     DESTINATION
-        Mod/Plot/plotAxes
+        ${INSTALL_MOD_DIR}/Plot/plotAxes
 )
 INSTALL(
     FILES
         ${PlotLabels_SRCS}
     DESTINATION
-        Mod/Plot/plotLabels
+        ${INSTALL_MOD_DIR}/Plot/plotLabels
 )
 INSTALL(
     FILES
         ${PlotPositions_SRCS}
     DESTINATION
-        Mod/Plot/plotPositions
+        ${INSTALL_MOD_DIR}/Plot/plotPositions
 )
 INSTALL(
     FILES
         ${PlotSave_SRCS}
     DESTINATION
-        Mod/Plot/plotSave
+        ${INSTALL_MOD_DIR}/Plot/plotSave
 )
 INSTALL(
     FILES
         ${PlotSeries_SRCS}
     DESTINATION
-        Mod/Plot/plotSeries
+        ${INSTALL_MOD_DIR}/Plot/plotSeries
 )
 INSTALL(
     FILES
         ${PlotUtils_SRCS}
     DESTINATION
-        Mod/Plot/plotUtils
+        ${INSTALL_MOD_DIR}/Plot/plotUtils
 )
 INSTALL(
     FILES
         ${PlotMain_SRCS}
     DESTINATION
-        Mod/Plot
+        ${INSTALL_MOD_DIR}/Plot
 )
 
 

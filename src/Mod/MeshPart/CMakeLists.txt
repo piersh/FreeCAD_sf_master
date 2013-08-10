@@ -9,5 +9,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/MeshPart
+        ${INSTALL_MOD_DIR}/MeshPart
 )

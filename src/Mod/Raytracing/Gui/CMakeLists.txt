@@ -97,4 +97,4 @@ else(MSVC)
     set_target_properties(RaytracingGui PROPERTIES INSTALL_RPATH ${INSTALL_RPATH})
 endif(MSVC)
 
-INSTALL(TARGETS RaytracingGui DESTINATION lib)
+INSTALL(TARGETS RaytracingGui DESTINATION ${INSTALL_LIB_DIR})

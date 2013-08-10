@@ -33,7 +33,7 @@ SET(StartPage_DATA
 )
 
 INSTALL(FILES ${StartPage_SRCS}
-    DESTINATION Mod/Start/StartPage
+    DESTINATION ${INSTALL_MOD_DIR}/Mod/Start/StartPage
 )
 
 INSTALL(FILES ${StartPage_DATA}

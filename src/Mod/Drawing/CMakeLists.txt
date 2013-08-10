@@ -12,7 +12,7 @@ INSTALL(
         DrawingExample.py
         DrawingTests.py
     DESTINATION
-        Mod/Drawing
+        ${INSTALL_MOD_DIR}/Drawing
 )
 
 INSTALL(

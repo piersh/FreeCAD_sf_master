@@ -29,5 +29,5 @@ fc_target_copy_resource(Material
 
 INSTALL(
     FILES ${Material_SRCS}
-    DESTINATION Mod/Material
+    DESTINATION ${INSTALL_MOD_DIR}/Material
 )

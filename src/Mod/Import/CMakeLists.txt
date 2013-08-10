@@ -9,5 +9,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/Import
+        ${INSTALL_MOD_DIR}/Import
 )   

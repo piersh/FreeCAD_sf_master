@@ -38,5 +38,5 @@ INSTALL(
     FILES
         ${MachDist_SRCS}
     DESTINATION
-        Mod/Machining_Distortion
+        ${INSTALL_MOD_DIR}/Machining_Distortion
 )

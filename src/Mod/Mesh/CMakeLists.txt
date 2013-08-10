@@ -11,5 +11,5 @@ INSTALL(
         BuildRegularGeoms.py
         App/MeshTestsApp.py
     DESTINATION
-        Mod/Mesh
+        ${INSTALL_MOD_DIR}/Mesh
 )

@@ -12,5 +12,5 @@ INSTALL(
         TestPartApp.py
         TestPartGui.py
     DESTINATION
-        Mod/Part
+        ${INSTALL_MOD_DIR}/Part
 )

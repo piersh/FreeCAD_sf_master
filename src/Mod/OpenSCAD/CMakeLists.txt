@@ -35,11 +35,11 @@ INSTALL(
     FILES
         ${ply_SRCS}
     DESTINATION
-        Mod/OpenSCAD/ply
+        ${INSTALL_MOD_DIR}/OpenSCAD/ply
 )
 INSTALL(
     FILES
         ${OpenSCAD_SRCS}
     DESTINATION
-        Mod/OpenSCAD
+        ${INSTALL_MOD_DIR}/OpenSCAD
 )

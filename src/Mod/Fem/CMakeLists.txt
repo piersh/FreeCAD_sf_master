@@ -12,6 +12,6 @@ INSTALL(
         convert2TetGen.py
         FemExample.py
     DESTINATION
-        Mod/Fem
+        ${INSTALL_MOD_DIR}/Fem
 )
 

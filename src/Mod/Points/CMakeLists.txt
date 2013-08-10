@@ -9,5 +9,5 @@ INSTALL(
         Init.py
         InitGui.py
     DESTINATION
-        Mod/Points
+        ${INSTALL_MOD_DIR}/Points
 )

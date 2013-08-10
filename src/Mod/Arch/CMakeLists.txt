@@ -36,5 +36,5 @@ fc_copy_sources(Arch "${CMAKE_BINARY_DIR}/Mod/Arch" ${all_files})
 
 INSTALL(
     FILES ${Arch_SRCS}
-    DESTINATION Mod/Arch
+    DESTINATION ${INSTALL_MOD_DIR}/Arch
 )

@@ -58,4 +58,4 @@ else(MSVC)
     set_target_properties(Inspection PROPERTIES INSTALL_RPATH ${INSTALL_RPATH})
 endif(MSVC)
 
-INSTALL(TARGETS Inspection DESTINATION lib)
+INSTALL(TARGETS Inspection DESTINATION ${INSTALL_LIB_DIR})
