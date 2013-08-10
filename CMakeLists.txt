@@ -71,6 +71,28 @@ endif(WIN32)
 SET(CMAKE_INSTALL_DATADIR data CACHE PATH "Output directory for data and resource files")
 SET(CMAKE_INSTALL_INCLUDEDIR include CACHE PATH "Output directory for header files")
 SET(CMAKE_INSTALL_DOCDIR doc CACHE PATH "Output directory for documentation and license files")
+
+SET(INSTALL_EXE_DIR bin) #output directory for executables
+SET(INSTALL_LIB_DIR lib) #output directory for libraries
+SET(INSTALL_MOD_DIR Mod) #output directory for modules
+
+if(APPLE)
+    #On OS X, defualt is to build bundle, but can also do UNIX install by turning option off
+    OPTION(FREECAD_APP_BUNDLE "Build as an application bundle" ON)
+endif(APPLE)
+
+if(FREECAD_APP_BUNDLE)
+    SET(BUNDLE_NAME ${PACKAGE_NAME})
+    
+    #cmake will put main executable in bundle, but other stuff needs to be installed in;
+    #set variables to use for this
+    SET(INSTALL_EXE_DIR ${BUNDLE_NAME}.app/Contents/MacOS)
+    SET(INSTALL_LIB_DIR ${BUNDLE_NAME}.app/Contents/lib)
+    SET(INSTALL_MOD_DIR ${BUNDLE_NAME}.app/Contents/Mod)
+
+    SET(CMAKE_INSTALL_DATADIR ${BUNDLE_NAME}.app/Contents/Resources)
+    SET(CMAKE_INSTALL_DOCDIR ${BUNDLE_NAME}.app/Contents/doc)
+endif(FREECAD_APP_BUNDLE)
  
 SET(PYCXX_INCLUDE_DIR
     "${CMAKE_SOURCE_DIR}/src" CACHE PATH
