@@ -11,9 +11,9 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path/../lib")
     
     #the PartDesign libs are in the Mod directory
-    if(item MATCHES "PartDesign^")
+    if(item MATCHES "PartDesign.*\\.so")
         set(path "@executable_path/../Mod/PartDesign")
-    endif(item MATCHES "PartDesign^")
+    endif(item MATCHES "PartDesign.*\\.so")
 
     set(${default_embedded_path_var} ${path} PARENT_SCOPE)
 endfunction(gp_item_default_embedded_path_override)
