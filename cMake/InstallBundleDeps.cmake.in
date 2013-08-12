@@ -1,10 +1,32 @@
 file(GLOB_RECURSE MODULES
      "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
+file(GLOB_RECURSE QTPLUGINS
+     "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/plugins/*.dylib")
+file(GLOB_RECURSE PIVY
+     "${CMAKE_INSTALL_PREFIX}/@INSTALL_EXE_DIR@/pivy/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
+file(GLOB_RECURSE PARTDESIGN
+    "${CMAKE_INSTALL_PREFIX}/@INSTALL_MOD_DIR@/PartDesign/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
+
+function(gp_item_default_embedded_path_override item default_embedded_path_var)
+    set(path "@executable_path/../lib")
+    
+    #the PartDesign libs are in the Mod directory
+    if(item MATCHES "PartDesign^")
+        set(path "@executable_path/../Mod/PartDesign")
+    endif(item MATCHES "PartDesign^")
+
+    set(${default_embedded_path_var} ${path} PARENT_SCOPE)
+endfunction(gp_item_default_embedded_path_override)
 
 include(BundleUtilities)
 
-function(gp_item_default_embedded_path item default_embedded_path_var)
-    set(${default_embedded_path_var} "@executable_path/../lib" PARENT_SCOPE)
-endfunction(gp_item_default_embedded_path)
+set(LIBS ${MODULES} ${QTPLUGINS} ${PARTDESIGN} ${PIVY})
 
-fixup_bundle("@APPS@" "${MODULES}" "@DIRS@")
+fixup_bundle("@APPS@" "${LIBS}" "@DIRS@")
+
+get_filename_component(PYTHON_LIB_DIR @PYTHON_LIBRARY@ PATH)
+set(PYTHON_LIB_DIR ${PYTHON_LIB_DIR}/python2.7)
+
+message("Copying python into bundle...")
+
+execute_process(COMMAND cmake -E copy_directory ${PYTHON_LIB_DIR} ${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python2.7)
