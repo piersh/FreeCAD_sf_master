@@ -17,5 +17,5 @@ fc_copy_sources(Spreadsheet "${CMAKE_BINARY_DIR}/Mod/Spreadsheet" ${all_files})
 
 INSTALL(
     FILES ${Spreadsheet_SRCS}
-    DESTINATION Mod/Spreadsheet
+    DESTINATION ${INSTALL_MOD_DIR}/Spreadsheet
 )
