@@ -1,3 +1,11 @@
+#the python library needs to be copied first so that PyQt4 can be fixed up
+get_filename_component(PYTHON_LIB_DIR @PYTHON_LIBRARY@ PATH)
+set(PYTHON_LIB_DIR ${PYTHON_LIB_DIR}/python2.7)
+
+message("Copying python into bundle...")
+
+execute_process(COMMAND cmake -E copy_directory ${PYTHON_LIB_DIR} ${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python2.7)
+
 file(GLOB_RECURSE MODULES
      "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
 file(GLOB_RECURSE QTPLUGINS
@@ -6,6 +14,8 @@ file(GLOB_RECURSE PIVY
      "${CMAKE_INSTALL_PREFIX}/@INSTALL_EXE_DIR@/pivy/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
 file(GLOB_RECURSE PARTDESIGN
     "${CMAKE_INSTALL_PREFIX}/@INSTALL_MOD_DIR@/PartDesign/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
+file(GLOB_RECURSE PYQT
+     "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python2.7/site-packages/PyQt4/*.so")
 
 function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path/../lib")
@@ -20,13 +30,8 @@ endfunction(gp_item_default_embedded_path_override)
 
 include(BundleUtilities)
 
-set(LIBS ${MODULES} ${QTPLUGINS} ${PARTDESIGN} ${PIVY})
+set(LIBS ${MODULES} ${QTPLUGINS} ${PARTDESIGN} ${PIVY} ${PYQT})
 
 fixup_bundle("@APPS@" "${LIBS}" "@DIRS@")
 
-get_filename_component(PYTHON_LIB_DIR @PYTHON_LIBRARY@ PATH)
-set(PYTHON_LIB_DIR ${PYTHON_LIB_DIR}/python2.7)
 
-message("Copying python into bundle...")
-
-execute_process(COMMAND cmake -E copy_directory ${PYTHON_LIB_DIR} ${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python2.7)
