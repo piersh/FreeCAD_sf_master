@@ -1,10 +1,11 @@
 #the python library needs to be copied first so that PyQt4 can be fixed up
 get_filename_component(PYTHON_LIB_DIR @PYTHON_LIBRARY@ PATH)
-set(PYTHON_LIB_DIR ${PYTHON_LIB_DIR}/python2.7)
+set(PY_VERSION "@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@")
+set(PYTHON_DIR ${PYTHON_LIB_DIR}/python${PY_VERSION})
 
 message("Copying python into bundle...")
 
-execute_process(COMMAND cmake -E copy_directory ${PYTHON_LIB_DIR} ${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python2.7)
+execute_process(COMMAND cmake -E copy_directory ${PYTHON_DIR} ${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python${PY_VERSION})
 
 file(GLOB MODULES
      "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
@@ -15,7 +16,7 @@ file(GLOB_RECURSE PIVY
 file(GLOB PARTDESIGN
     "${CMAKE_INSTALL_PREFIX}/@INSTALL_MOD_DIR@/PartDesign/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
 file(GLOB PYQT
-     "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python2.7/site-packages/PyQt4/*.so")
+     "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python${PY_VERSION}/site-packages/PyQt4/*.so")
 
 function(gp_item_default_embedded_path_override item default_embedded_path_var)
     set(path "@executable_path/../lib")
