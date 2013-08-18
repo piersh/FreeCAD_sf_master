@@ -1,8 +1,7 @@
 #install dependencies into app bundle -- must be done last
 if(FREECAD_APP_BUNDLE)
         #directories to look for dependencies
-        get_filename_component(OCC_LIBRARY_DIR ${OCC_LIBRARY} PATH)
-        SET(BUNDLE_DEPS_DIRS ${OCC_LIBRARY_DIR} ${} CACHE STRING 
+        SET(BUNDLE_DEPS_DIRS "/usr/local/lib" CACHE STRING 
             "Directories that fixup_bundle will search for libs")
         SET(DIRS ${BUNDLE_DEPS_DIRS} 
             ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}
