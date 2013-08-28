@@ -1,11 +1,35 @@
-#the python library needs to be copied first so that PyQt4 can be fixed up
-get_filename_component(PYTHON_LIB_DIR @PYTHON_LIBRARY@ PATH)
-set(PY_VERSION "@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@")
-set(PYTHON_DIR ${PYTHON_LIB_DIR}/python${PY_VERSION})
+#The python library needs to be copied first so that PyQt4 can be fixed up
 
-message("Copying python into bundle...")
+#Can't depend on geting the python version from vars set by find_package(PythonInterp) or from the path of the lib,
+#so get it from otool output
+execute_process(COMMAND otool -L @PYTHON_LIBRARY@ OUTPUT_VARIABLE cmd_out)
 
-execute_process(COMMAND cmake -E copy_directory ${PYTHON_DIR} ${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python${PY_VERSION})
+#convert to cmake list (MATCHALL stores matches separated by semicolon)
+string(REGEX MATCHALL "[^\n]+" cmd_out_list "${cmd_out}")
+
+#library id is second line
+list(GET cmd_out_list 1 lib_id_line)
+
+#e.g. value of lib_id_line: /Library/Frameworks/Python.framework/Versions/2.7/Python (compatibility version 2.7.0, current version 2.7.0)
+string(REGEX REPLACE "^.*([0-9]\\.[0-9])..\\)$" "\\1" PY_VERSION "${lib_id_line}")
+string(REGEX REPLACE "^\t(.*)/.*[ ]\\(.*\\)$" "\\1" py_lib_dir "${lib_id_line}")
+
+#Determine path of 'python' directory
+if(py_lib_dir MATCHES "Python\\.framework")
+    set(PYTHON_DIR "${py_lib_dir}/lib/python${PY_VERSION}")
+    set(EMBEDDED_PYTHON_DIR 
+        "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/../Frameworks/Python.framework/Versions/${PY_VERSION}/lib/python${PY_VERSION}")
+else()
+    #standard unix install
+    set(PYTHON_DIR "${py_lib_dir}/python${PY_VERSION}")
+    set(EMBEDDED_PYTHON_DIR 
+        "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python${PY_VERSION}")
+endif()
+
+if(EXISTS "${PYTHON_DIR}")
+    message(STATUS "Copying 'python' directory into bundle...")
+    execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory "${PYTHON_DIR}" "${EMBEDDED_PYTHON_DIR}")
+endif()
 
 file(GLOB MODULES
      "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
@@ -15,11 +39,15 @@ file(GLOB_RECURSE PIVY
      "${CMAKE_INSTALL_PREFIX}/@INSTALL_EXE_DIR@/pivy/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
 file(GLOB PARTDESIGN
     "${CMAKE_INSTALL_PREFIX}/@INSTALL_MOD_DIR@/PartDesign/*@CMAKE_SHARED_LIBRARY_SUFFIX@")
-file(GLOB PYQT
-     "${CMAKE_INSTALL_PREFIX}/@INSTALL_LIB_DIR@/python${PY_VERSION}/site-packages/PyQt4/*.so")
+file(GLOB PYQT "${EMBEDDED_PYTHON_DIR}/site-packages/PyQt4/*.so")
 
 function(gp_item_default_embedded_path_override item default_embedded_path_var)
-    set(path "@executable_path/../lib")
+    #by defualt use value set by gp_item_default_embedded_path function
+    set(path ${${default_embedded_path_var}})
+    
+    if(item MATCHES "\\.dylib$" OR item MATCHES "\\.so$")
+      set(path "@executable_path/../lib")
+    endif()
     
     #the PartDesign libs are in the Mod directory
     if(item MATCHES "PartDesign.*\\.so")
@@ -31,6 +59,29 @@ endfunction(gp_item_default_embedded_path_override)
 
 include(BundleUtilities)
 
+#Override BundleUtilities 'copy_resolved_framework_into_bundle' to be able to handle special cases 
+function(copy_resolved_framework_into_bundle resolved_item resolved_embedded_item)
+  set(resolved_item_compare "${resolved_item}")
+  set(resolved_embedded_item_compare "${resolved_embedded_item}")
+
+  if("${resolved_item_compare}" STREQUAL "${resolved_embedded_item_compare}")
+    message(STATUS "warning: resolved_item == resolved_embedded_item - not copying...")
+  else()
+      # Framework lib itself:
+      execute_process(COMMAND ${CMAKE_COMMAND} -E copy "${resolved_item}" "${resolved_embedded_item}")
+      
+      #Don't copy Resources for Python framework because it has stuff thats not needed
+      if(NOT resolved_item MATCHES "Python\\.framework/")
+        # Plus Resources, if they exist:
+        string(REGEX REPLACE "^(.*)/[^/]+/[^/]+/[^/]+$" "\\1/Resources" resolved_resources "${resolved_item}")
+        string(REGEX REPLACE "^(.*)/[^/]+/[^/]+/[^/]+$" "\\1/Resources" resolved_embedded_resources "${resolved_embedded_item}")
+        if(EXISTS "${resolved_resources}")
+          execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory "${resolved_resources}" "${resolved_embedded_resources}")
+        endif()
+      endif()
+  endif()
+endfunction(copy_resolved_framework_into_bundle)
+     
 set(LIBS ${MODULES} ${QTPLUGINS} ${PARTDESIGN} ${PIVY} ${PYQT})
 
 fixup_bundle("@APPS@" "${LIBS}" "@DIRS@")
