@@ -21,5 +21,5 @@ if(FREECAD_APP_BUNDLE)
             @ONLY
         )
         INSTALL(SCRIPT ${CMAKE_BINARY_DIR}/InstallBundleDeps.cmake)
-        INSTALL(FILE qt.conf DESTINATION ${INSTALL_EXE_DIR}/../Resources)
+        INSTALL(FILES qt.conf DESTINATION ${INSTALL_EXE_DIR}/../Resources)
 endif(FREECAD_APP_BUNDLE)
