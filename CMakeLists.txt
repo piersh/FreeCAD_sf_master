@@ -76,6 +76,10 @@ SET(INSTALL_EXE_DIR bin) #output directory for executables
 SET(INSTALL_LIB_DIR lib) #output directory for libraries
 SET(INSTALL_MOD_DIR Mod) #output directory for modules
 
+# used as compiler defines
+SET(RESOURCEDIR "${CMAKE_INSTALL_DATADIR}")
+SET(DOCDIR "${CMAKE_INSTALL_DOCDIR}")
+
 if(APPLE)
     #On OS X, defualt is to build bundle, but can also do UNIX install by turning option off
     OPTION(FREECAD_APP_BUNDLE "Build as an application bundle" ON)
@@ -91,7 +95,11 @@ if(FREECAD_APP_BUNDLE)
     SET(INSTALL_MOD_DIR ${BUNDLE_NAME}.app/Contents/Mod)
 
     SET(CMAKE_INSTALL_DATADIR ${BUNDLE_NAME}.app/Contents/Resources)
-    SET(CMAKE_INSTALL_DOCDIR ${BUNDLE_NAME}.app/Contents/doc)
+    SET(CMAKE_INSTALL_DOCDIR ${BUNDLE_NAME}.app/Contents/Resources/doc)
+    
+    # used as compiler defines
+    SET(RESOURCEDIR "Resources")
+    SET(DOCDIR "Resources/doc")
 endif(FREECAD_APP_BUNDLE)
  
 SET(PYCXX_INCLUDE_DIR
@@ -100,10 +108,6 @@ SET(PYCXX_INCLUDE_DIR
 SET(PYCXX_SOURCE_DIR
     "${CMAKE_SOURCE_DIR}/src/CXX" CACHE PATH
     "Path to the directory containing PyCXX's cxxextensions.c source file")
-
-# used as compiler defines
-SET(RESOURCEDIR "${CMAKE_INSTALL_DATADIR}")
-SET(DOCDIR "${CMAKE_INSTALL_DOCDIR}")
 
 MESSAGE(STATUS "prefix: ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "datadir: ${CMAKE_INSTALL_DATADIR}")
