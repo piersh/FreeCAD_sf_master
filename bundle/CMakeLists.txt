@@ -4,9 +4,9 @@ if(FREECAD_APP_BUNDLE)
         SET(BUNDLE_DEPS_DIRS "/usr/local/lib" CACHE STRING 
             "Directories that fixup_bundle will search for libs")
         SET(DIRS ${BUNDLE_DEPS_DIRS} 
-            ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}
+            "\${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}"
             #PartDesign is special
-            ${CMAKE_INSTALL_PREFIX}/${INSTALL_MOD_DIR}/PartDesign
+            "\${CMAKE_INSTALL_PREFIX}/${INSTALL_MOD_DIR}/PartDesign"
         )
 
         #location of app
