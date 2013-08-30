@@ -539,7 +539,7 @@ add_subdirectory(bundle)
 
 # ================================================================================
 # == Packaging ===================================================================
-if(FREECAD_MAINTAINERS_BUILD AND NOT WIN32)
+if(FREECAD_MAINTAINERS_BUILD AND NOT APPLE AND NOT WIN32)
 	set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "An extensible Open Source CAx program")
 	set(CPACK_PACKAGE_VENDOR "FreeCAD development team")
 	if(WIN32)
@@ -626,8 +626,13 @@ if(FREECAD_MAINTAINERS_BUILD AND NOT WIN32)
 	include(CPack)
 
 	#ADD_CUSTOM_TARGET(DIST make package_source)
-
-endif(FREECAD_MAINTAINERS_BUILD AND NOT WIN32)
+elseif(FREECAD_MAINTAINERS_BUILD AND FREECAD_APP_BUNDLE)
+    set(CPACK_PACKAGE_FILE_NAME ${PACKAGE_NAME})
+    set(CPACK_DMG_FORMAT "UDBZ")
+    set(CPACK_BINARY_DRAGNDROP ON)
+    set(CPACK_GENERATOR "DragNDrop")
+    include(CPack)
+endif(FREECAD_MAINTAINERS_BUILD AND NOT APPLE AND NOT WIN32)
     #add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
     add_custom_target(dist-git
             COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/src/Tools/makedist.py
