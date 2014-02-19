@@ -23,6 +23,9 @@
 
 #include "PreCompiled.h"
 
+#include <QLabel>
+#include <QPushButton>
+
 /// Here the FreeCAD includes sorted by Base,App,Gui......
 
 #include "TaskPanelView.h"

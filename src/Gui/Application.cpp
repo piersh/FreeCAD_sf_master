@@ -43,6 +43,7 @@
 # include <QSessionManager>
 # include <QTextStream>
 #endif
+# include <QStatusBar>
 
 #include <boost/interprocess/sync/file_lock.hpp>
 
@@ -332,7 +333,7 @@ Application::Application(bool GUIenabled)
         ParameterGrp::handle hPGrp = App::GetApplication().GetUserParameter().GetGroup("BaseApp");
         hPGrp = hPGrp->GetGroup("Preferences")->GetGroup("General");
         QString lang = QLocale::languageToString(QLocale::system().language());
-        Translator::instance()->activateLanguage(hPGrp->GetASCII("Language", (const char*)lang.toAscii()).c_str());
+        Translator::instance()->activateLanguage(hPGrp->GetASCII("Language", (const char*)lang.toLatin1()).c_str());
         GetWidgetFactorySupplier();
 
         ParameterGrp::handle hUnits = App::GetApplication().GetParameterGroupByPath
@@ -1005,7 +1006,7 @@ bool Application::activateWorkbench(const char* name)
             ok = true; // already active
         // now try to create and activate the matching workbench object
         else if (WorkbenchManager::instance()->activate(name, type)) {
-            getMainWindow()->activateWorkbench(QString::fromAscii(name));
+            getMainWindow()->activateWorkbench(QString::fromLatin1(name));
             this->signalActivateWorkbench(name);
             ok = true;
         }
@@ -1050,7 +1051,7 @@ bool Application::activateWorkbench(const char* name)
     }
     catch (Py::Exception&) {
         Base::PyException e; // extract the Python error text
-        QString msg = QString::fromAscii(e.what());
+        QString msg = QString::fromLatin1(e.what());
         QRegExp rx;
         // ignore '<type 'exceptions.ImportError'>' prefixes
         rx.setPattern(QLatin1String("^\\s*<type 'exceptions.ImportError'>:\\s*"));
@@ -1060,7 +1061,7 @@ bool Application::activateWorkbench(const char* name)
             pos = rx.indexIn(msg);
         }
 
-        Base::Console().Error("%s\n", (const char*)msg.toAscii());
+        Base::Console().Error("%s\n", (const char*)msg.toLatin1());
         Base::Console().Log("%s\n", e.getStackTrace().c_str());
         if (!d->startingUp) {
             wc.restoreCursor();
@@ -1077,7 +1078,7 @@ QPixmap Application::workbenchIcon(const QString& wb) const
 {
     Base::PyGILStateLocker lock;
     // get the python workbench object from the dictionary
-    PyObject* pcWorkbench = PyDict_GetItemString(_pcWorkbenchDictionary, wb.toAscii());
+    PyObject* pcWorkbench = PyDict_GetItemString(_pcWorkbenchDictionary, wb.toLatin1());
     // test if the workbench exists
     if (pcWorkbench) {
         // make a unique icon name
@@ -1150,7 +1151,7 @@ QString Application::workbenchToolTip(const QString& wb) const
 {
     // get the python workbench object from the dictionary
     Base::PyGILStateLocker lock;
-    PyObject* pcWorkbench = PyDict_GetItemString(_pcWorkbenchDictionary, wb.toAscii());
+    PyObject* pcWorkbench = PyDict_GetItemString(_pcWorkbenchDictionary, wb.toLatin1());
     // test if the workbench exists
     if (pcWorkbench) {
         // get its ToolTip member if possible
@@ -1174,7 +1175,7 @@ QString Application::workbenchMenuText(const QString& wb) const
 {
     // get the python workbench object from the dictionary
     Base::PyGILStateLocker lock;
-    PyObject* pcWorkbench = PyDict_GetItemString(_pcWorkbenchDictionary, wb.toAscii());
+    PyObject* pcWorkbench = PyDict_GetItemString(_pcWorkbenchDictionary, wb.toLatin1());
     // test if the workbench exists
     if (pcWorkbench) {
         // get its ToolTip member if possible
@@ -1205,13 +1206,13 @@ QStringList Application::workbenches(void) const
     const char* start = (st != config.end() ? st->second.c_str() : "<none>");
     QStringList hidden, extra;
     if (ht != config.end()) { 
-        QString items = QString::fromAscii(ht->second.c_str());
+        QString items = QString::fromLatin1(ht->second.c_str());
         hidden = items.split(QLatin1Char(';'), QString::SkipEmptyParts);
         if (hidden.isEmpty())
             hidden.push_back(QLatin1String(""));
     }
     if (et != config.end()) { 
-        QString items = QString::fromAscii(et->second.c_str());
+        QString items = QString::fromLatin1(et->second.c_str());
         extra = items.split(QLatin1Char(';'), QString::SkipEmptyParts);
         if (extra.isEmpty())
             extra.push_back(QLatin1String(""));
@@ -1227,18 +1228,18 @@ QStringList Application::workbenches(void) const
         // add only allowed workbenches
         bool ok = true;
         if (!extra.isEmpty()&&ok) {
-            ok = (extra.indexOf(QString::fromAscii(wbName)) != -1);
+            ok = (extra.indexOf(QString::fromLatin1(wbName)) != -1);
         }
         if (!hidden.isEmpty()&&ok) {
-            ok = (hidden.indexOf(QString::fromAscii(wbName)) == -1);
+            ok = (hidden.indexOf(QString::fromLatin1(wbName)) == -1);
         }
     
         // okay the item is visible
         if (ok)
-            wb.push_back(QString::fromAscii(wbName));
+            wb.push_back(QString::fromLatin1(wbName));
         // also allow start workbench in case it is hidden
         else if (strcmp(wbName, start) == 0)
-            wb.push_back(QString::fromAscii(wbName));
+            wb.push_back(QString::fromLatin1(wbName));
     }
 
     return wb;
@@ -1383,7 +1384,7 @@ void messageHandler(QtMsgType type, const char *msg)
         Base::Console().Error("%s\n", msg);
         abort();                    // deliberately core dump
     }
-#ifdef FC_OS_WIN32
+#if defined(FC_OS_WIN32) && QT_VERSION < 0x050000
     if (old_qtmsg_handler)
         (*old_qtmsg_handler)(type, msg);
 #endif
@@ -1392,6 +1393,13 @@ void messageHandler(QtMsgType type, const char *msg)
     Base::Console().Log("%s\n", msg);
 #endif
 }
+
+#if QT_VERSION >= 0x050000
+void messageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+	messageHandler(type, msg.toLocal8Bit().constData());
+}
+#endif
 
 #ifdef FC_DEBUG // redirect Coin messages to FreeCAD
 void messageHandlerCoin(const SoError * error, void * userdata)
@@ -1411,7 +1419,7 @@ void messageHandlerCoin(const SoError * error, void * userdata)
             Base::Console().Error("%s\n", msg);
             break;
         }
-#ifdef FC_OS_WIN32
+#if defined(FC_OS_WIN32) && QT_VERSION < 0x050000
     if (old_qtmsg_handler)
         (*old_qtmsg_handler)(QtDebugMsg, msg);
 #endif
@@ -1442,7 +1450,11 @@ void Application::initApplication(void)
         initTypes();
         new Base::ScriptProducer( "FreeCADGuiInit", FreeCADGuiInit );
         init_resources();
-        old_qtmsg_handler = qInstallMsgHandler(messageHandler);
+#if QT_VERSION >= 0x050000
+		qInstallMessageHandler(messageHandler);
+#else
+		old_qtmsg_handler = qInstallMsgHandler(messageHandler);
+#endif
     }
     catch (...) {
         // force to flush the log
@@ -1720,7 +1732,7 @@ void Application::runApplication(void)
     // if the auto workbench is not visible then force to use the default workbech
     // and replace the wrong entry in the parameters
     QStringList wb = app.workbenches();
-    if (!wb.contains(QString::fromAscii(start.c_str()))) {
+    if (!wb.contains(QString::fromLatin1(start.c_str()))) {
         start = App::Application::Config()["StartWorkbench"];
         App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/General")->
                               SetASCII("AutoloadModule", start.c_str());
@@ -1816,11 +1828,11 @@ void Application::runApplication(void)
 void Application::checkForPreviousCrashes()
 {
     QDir tmp = QDir::temp();
-    tmp.setNameFilters(QStringList() << QString::fromAscii("*.lock"));
+    tmp.setNameFilters(QStringList() << QString::fromLatin1("*.lock"));
     tmp.setFilter(QDir::Files);
 
     QList<QFileInfo> restoreDocFiles;
-    QString exeName = QString::fromAscii(App::GetApplication().getExecutableName());
+    QString exeName = QString::fromLatin1(App::GetApplication().getExecutableName());
     QList<QFileInfo> locks = tmp.entryInfoList();
     for (QList<QFileInfo>::iterator it = locks.begin(); it != locks.end(); ++it) {
         QString bn = it->baseName();

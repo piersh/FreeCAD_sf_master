@@ -23,6 +23,9 @@
 
 #include "PreCompiled.h"
 
+#include <QDockWidget>
+#include <QStatusBar>
+
 #include "Workbench.h"
 #include "WorkbenchPy.h"
 #include "PythonWorkbenchPy.h"
@@ -282,7 +285,7 @@ void Workbench::setupCustomShortcuts() const
                 // may be UTF-8 encoded
                 QString str = QString::fromUtf8(it->second.c_str());
                 QKeySequence shortcut = str;
-                cmd->getAction()->setShortcut(shortcut);
+                cmd->getAction()->setShortcut(shortcut.toString());
             }
         }
     }

@@ -201,6 +201,7 @@ QModelIndex PropertyModel::propertyIndexFromPath(const QStringList& path) const
 
 void PropertyModel::buildUp(const std::map<std::string, std::vector<App::Property*> >& props)
 {
+	beginResetModel();
     // fill up the listview with the properties
     rootItem->reset();
 
@@ -222,13 +223,13 @@ void PropertyModel::buildUp(const std::map<std::string, std::vector<App::Propert
         PropertyItem* group = static_cast<PropertyItem*>(PropertySeparatorItem::create());
         group->setParent(rootItem);
         rootItem->appendChild(group);
-        group->setPropertyName(QString::fromAscii(kt->first.c_str()));
+        group->setPropertyName(QString::fromLatin1(kt->first.c_str()));
 
         // setup the items for the properties
         std::vector<std::vector<App::Property*> >::const_iterator it;
         for (it = kt->second.begin(); it != kt->second.end(); ++it) {
             App::Property* prop = it->front();
-            QString editor = QString::fromAscii(prop->getEditorName());
+            QString editor = QString::fromLatin1(prop->getEditorName());
             if (!editor.isEmpty()) {
                 Base::BaseClass* item = 0;
                 try {
@@ -245,14 +246,14 @@ void PropertyModel::buildUp(const std::map<std::string, std::vector<App::Propert
                     PropertyItem* child = (PropertyItem*)item;
                     child->setParent(rootItem);
                     rootItem->appendChild(child);
-                    child->setPropertyName(QString::fromAscii(prop->getName()));
+                    child->setPropertyName(QString::fromLatin1(prop->getName()));
                     child->setPropertyData(*it);
                 }
             }
         }
     }
 
-    reset();
+    endResetModel();
 }
 
 #include "moc_PropertyModel.cpp"

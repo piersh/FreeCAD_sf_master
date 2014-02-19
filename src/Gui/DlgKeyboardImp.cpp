@@ -102,7 +102,11 @@ DlgCustomKeyboardImp::DlgCustomKeyboardImp( QWidget* parent  )
     commandTreeWidget->setHeaderLabels(labels);
     commandTreeWidget->header()->hide();
     commandTreeWidget->setIconSize(QSize(32, 32));
-    commandTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+#if QT_VERSION >= 0x050000
+	commandTreeWidget->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+#else
+	commandTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+#endif
 
     assignedTreeWidget->setHeaderLabels(labels);
     assignedTreeWidget->header()->hide();
@@ -137,22 +141,22 @@ void DlgCustomKeyboardImp::on_commandTreeWidget_currentItemChanged(QTreeWidgetIt
     if (cmd) {
         if (cmd->getAction()) {
             QKeySequence ks = cmd->getAction()->shortcut();
-            QKeySequence ks2 = QString::fromAscii(cmd->getAccel());
+            QKeySequence ks2 = QString::fromLatin1(cmd->getAccel());
             QKeySequence ks3 = editShortcut->text();
 
             if (ks.isEmpty())
                 accelLineEditShortcut->setText( tr("none") );
             else
-                accelLineEditShortcut->setText(ks);
+                accelLineEditShortcut->setText(ks.toString());
 
             buttonAssign->setEnabled(!editShortcut->text().isEmpty() && (ks != ks3));
             buttonReset->setEnabled((ks != ks2));
         } else {
-          QKeySequence ks = QString::fromAscii(cmd->getAccel());
+          QKeySequence ks = QString::fromLatin1(cmd->getAccel());
             if (ks.isEmpty())
                 accelLineEditShortcut->setText( tr("none") );
             else
-                accelLineEditShortcut->setText(ks);
+                accelLineEditShortcut->setText(ks.toString());
             buttonAssign->setEnabled(false);
             buttonReset->setEnabled(false);
         }
@@ -173,7 +177,7 @@ void DlgCustomKeyboardImp::on_categoryBox_activated(int index)
     editShortcut->clear();
 
     CommandManager & cCmdMgr = Application::Instance->commandManager();
-    std::vector<Command*> aCmds = cCmdMgr.getGroupCommands( group.toAscii() );
+    std::vector<Command*> aCmds = cCmdMgr.getGroupCommands( group.toLatin1() );
     for (std::vector<Command*>::iterator it = aCmds.begin(); it != aCmds.end(); ++it) {
         QTreeWidgetItem* item = new QTreeWidgetItem(commandTreeWidget);
         item->setText(1, qApp->translate((*it)->className(), (*it)->getMenuText()));
@@ -199,7 +203,7 @@ void DlgCustomKeyboardImp::on_buttonAssign_clicked()
     Command* cmd = cCmdMgr.getCommandByName(name.constData());
     if (cmd && cmd->getAction()) {
         QKeySequence shortcut = editShortcut->text();
-        cmd->getAction()->setShortcut(shortcut);
+        cmd->getAction()->setShortcut(shortcut.toString());
         accelLineEditShortcut->setText(editShortcut->text());
         editShortcut->clear();
 
@@ -223,8 +227,8 @@ void DlgCustomKeyboardImp::on_buttonReset_clicked()
     CommandManager & cCmdMgr = Application::Instance->commandManager();
     Command* cmd = cCmdMgr.getCommandByName(name.constData());
     if (cmd && cmd->getAction()) {
-      cmd->getAction()->setShortcut(QString::fromAscii(cmd->getAccel()));
-        QString txt = cmd->getAction()->shortcut();
+      cmd->getAction()->setShortcut(QString::fromLatin1(cmd->getAccel()));
+        QString txt = cmd->getAction()->shortcut().toString();
         accelLineEditShortcut->setText((txt.isEmpty() ? tr("none") : txt));
         ParameterGrp::handle hGrp = WindowParameter::getDefaultParameter()->GetGroup("Shortcut");
         hGrp->RemoveASCII(name.constData());
@@ -240,7 +244,7 @@ void DlgCustomKeyboardImp::on_buttonResetAll_clicked()
     std::vector<Command*> cmds = cCmdMgr.getAllCommands();
     for (std::vector<Command*>::iterator it = cmds.begin(); it != cmds.end(); ++it) {
         if ((*it)->getAction()) {
-          (*it)->getAction()->setShortcut(QKeySequence(QString::fromAscii((*it)->getAccel())));
+          (*it)->getAction()->setShortcut(QKeySequence(QString::fromLatin1((*it)->getAccel())).toString());
         }
     }
 
@@ -277,7 +281,7 @@ void DlgCustomKeyboardImp::on_editShortcut_textChanged(const QString& sc)
         for (std::vector<Command*>::iterator it = cmds.begin(); it != cmds.end(); ++it) {
             if ((*it)->getAction() && (*it)->getAction()->shortcut() == ks) {
                 ++countAmbiguous;
-                ambiguousCommand = QString::fromAscii((*it)->getName()); // store the last one
+                ambiguousCommand = QString::fromLatin1((*it)->getName()); // store the last one
                 ambiguousMenu = qApp->translate((*it)->className(), (*it)->getMenuText());
 
                 QTreeWidgetItem* item = new QTreeWidgetItem(assignedTreeWidget);

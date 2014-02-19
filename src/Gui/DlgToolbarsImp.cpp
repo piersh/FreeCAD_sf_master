@@ -118,7 +118,11 @@ DlgCustomToolbars::DlgCustomToolbars(DlgCustomToolbars::Type t, QWidget* parent)
     commandTreeWidget->setHeaderLabels(labels);
     commandTreeWidget->header()->hide();
     commandTreeWidget->setIconSize(QSize(32, 32));
-    commandTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+#if QT_VERSION >= 0x050000
+	commandTreeWidget->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+#else
+	commandTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+#endif
 
     labels.clear(); labels << tr("Command");
     toolbarTreeWidget->setHeaderLabels(labels);
@@ -127,7 +131,7 @@ DlgCustomToolbars::DlgCustomToolbars(DlgCustomToolbars::Type t, QWidget* parent)
     on_categoryBox_activated(categoryBox->currentIndex());
     Workbench* w = WorkbenchManager::instance()->active();
     if (w) {
-        QString name = QString::fromAscii(w->name().c_str());
+        QString name = QString::fromLatin1(w->name().c_str());
         int index = workbenchBox->findData(name);
         workbenchBox->setCurrentIndex(index);
     }
@@ -171,7 +175,7 @@ void DlgCustomToolbars::hideEvent(QHideEvent * event)
 {
     QVariant data = workbenchBox->itemData(workbenchBox->currentIndex(), Qt::UserRole);
     QString workbench = data.toString();
-    exportCustomToolbars(workbench.toAscii());
+    exportCustomToolbars(workbench.toLatin1());
 
     CustomizeActionPage::hideEvent(event);
 }
@@ -183,7 +187,7 @@ void DlgCustomToolbars::on_categoryBox_activated(int index)
     commandTreeWidget->clear();
 
     CommandManager & cCmdMgr = Application::Instance->commandManager();
-    std::vector<Command*> aCmds = cCmdMgr.getGroupCommands(group.toAscii());
+    std::vector<Command*> aCmds = cCmdMgr.getGroupCommands(group.toLatin1());
 
     // Create a separator item
     QTreeWidgetItem* sepitem = new QTreeWidgetItem(commandTreeWidget);
@@ -207,7 +211,7 @@ void DlgCustomToolbars::on_workbenchBox_activated(int index)
     QString workbench = data.toString();
     toolbarTreeWidget->clear();
 
-    QByteArray workbenchname = workbench.toAscii();
+    QByteArray workbenchname = workbench.toLatin1();
     importCustomToolbars(workbenchname);
 }
 
@@ -262,9 +266,9 @@ void DlgCustomToolbars::exportCustomToolbars(const QByteArray& workbench)
     CommandManager& rMgr = Application::Instance->commandManager();
     for (int i=0; i<toolbarTreeWidget->topLevelItemCount(); i++) {
         QTreeWidgetItem* toplevel = toolbarTreeWidget->topLevelItem(i);
-        QString groupName = QString::fromAscii("Custom_%1").arg(i+1);
+        QString groupName = QString::fromLatin1("Custom_%1").arg(i+1);
         QByteArray toolbarName = toplevel->text(0).toUtf8();
-        ParameterGrp::handle hToolGrp = hGrp->GetGroup(groupName.toAscii());
+        ParameterGrp::handle hToolGrp = hGrp->GetGroup(groupName.toLatin1());
         hToolGrp->SetASCII("Name", toolbarName.constData());
         hToolGrp->SetBool("Active", toplevel->checkState(0) == Qt::Checked);
         for (int j=0; j<toplevel->childCount(); j++) {
@@ -305,7 +309,7 @@ void DlgCustomToolbars::on_moveActionRightButton_clicked()
 
     QVariant data = workbenchBox->itemData(workbenchBox->currentIndex(), Qt::UserRole);
     QString workbench = data.toString();
-    exportCustomToolbars(workbench.toAscii());
+    exportCustomToolbars(workbench.toLatin1());
 }
 
 /** Removes an action */
@@ -323,7 +327,7 @@ void DlgCustomToolbars::on_moveActionLeftButton_clicked()
 
     QVariant data = workbenchBox->itemData(workbenchBox->currentIndex(), Qt::UserRole);
     QString workbench = data.toString();
-    exportCustomToolbars(workbench.toAscii());
+    exportCustomToolbars(workbench.toLatin1());
 }
 
 /** Noves up an action */
@@ -344,7 +348,7 @@ void DlgCustomToolbars::on_moveActionUpButton_clicked()
 
     QVariant data = workbenchBox->itemData(workbenchBox->currentIndex(), Qt::UserRole);
     QString workbench = data.toString();
-    exportCustomToolbars(workbench.toAscii());
+    exportCustomToolbars(workbench.toLatin1());
 }
 
 /** Moves down an action */
@@ -365,13 +369,13 @@ void DlgCustomToolbars::on_moveActionDownButton_clicked()
 
     QVariant data = workbenchBox->itemData(workbenchBox->currentIndex(), Qt::UserRole);
     QString workbench = data.toString();
-    exportCustomToolbars(workbench.toAscii());
+    exportCustomToolbars(workbench.toLatin1());
 }
 
 void DlgCustomToolbars::on_newButton_clicked()
 {
     bool ok;
-    QString text = QString::fromAscii("Custom%1").arg(toolbarTreeWidget->topLevelItemCount()+1);
+    QString text = QString::fromLatin1("Custom%1").arg(toolbarTreeWidget->topLevelItemCount()+1);
     text = QInputDialog::getText(this, tr("New toolbar"), tr("Toolbar name:"), QLineEdit::Normal, text, &ok);
     if (ok) {
         // Check for duplicated name
@@ -391,7 +395,7 @@ void DlgCustomToolbars::on_newButton_clicked()
 
         QVariant data = workbenchBox->itemData(workbenchBox->currentIndex(), Qt::UserRole);
         QString workbench = data.toString();
-        exportCustomToolbars(workbench.toAscii());
+        exportCustomToolbars(workbench.toLatin1());
         addCustomToolbar(text);
     }
 }
@@ -408,7 +412,7 @@ void DlgCustomToolbars::on_deleteButton_clicked()
 
     QVariant data = workbenchBox->itemData(workbenchBox->currentIndex(), Qt::UserRole);
     QString workbench = data.toString();
-    exportCustomToolbars(workbench.toAscii());
+    exportCustomToolbars(workbench.toLatin1());
 }
 
 void DlgCustomToolbars::on_renameButton_clicked()
@@ -440,7 +444,7 @@ void DlgCustomToolbars::on_renameButton_clicked()
     if (renamed) {
         QVariant data = workbenchBox->itemData(workbenchBox->currentIndex(), Qt::UserRole);
         QString workbench = data.toString();
-        exportCustomToolbars(workbench.toAscii());
+        exportCustomToolbars(workbench.toLatin1());
     }
 }
 

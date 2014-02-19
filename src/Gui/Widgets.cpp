@@ -78,12 +78,16 @@ void CommandIconView::startDrag ( Qt::DropActions supportedActions )
     dataStream << items.count();
     for (QList<QListWidgetItem*>::ConstIterator it = items.begin(); it != items.end(); ++it) {
         if (it == items.begin())
+#if QT_VERSION >= 0x050000
+			pixmap = (*it)->data(Qt::UserRole).value<QPixmap>();
+#else
             pixmap = qVariantValue<QPixmap>((*it)->data(Qt::UserRole));
+#endif
         dataStream << (*it)->text();
     }
 
     QMimeData *mimeData = new QMimeData;
-    mimeData->setData(QString::fromAscii("text/x-action-items"), itemData);
+    mimeData->setData(QString::fromLatin1("text/x-action-items"), itemData);
 
     QDrag *drag = new QDrag(this);
     drag->setMimeData(mimeData);
@@ -226,12 +230,21 @@ QString ActionSelector::availableLabel() const
 
 void ActionSelector::retranslateUi()
 {
+#if QT_VERSION >= 0x050000
+	labelAvailable->setText(QApplication::translate("Gui::ActionSelector", "Available:"));
+    labelSelected->setText(QApplication::translate("Gui::ActionSelector", "Selected:"));
+    addButton->setToolTip(QApplication::translate("Gui::ActionSelector", "Add"));
+    removeButton->setToolTip(QApplication::translate("Gui::ActionSelector", "Remove"));
+    upButton->setToolTip(QApplication::translate("Gui::ActionSelector", "Move up"));
+    downButton->setToolTip(QApplication::translate("Gui::ActionSelector", "Move down"));
+#else
     labelAvailable->setText(QApplication::translate("Gui::ActionSelector", "Available:", 0, QApplication::UnicodeUTF8));
     labelSelected->setText(QApplication::translate("Gui::ActionSelector", "Selected:", 0, QApplication::UnicodeUTF8));
     addButton->setToolTip(QApplication::translate("Gui::ActionSelector", "Add", 0, QApplication::UnicodeUTF8));
     removeButton->setToolTip(QApplication::translate("Gui::ActionSelector", "Remove", 0, QApplication::UnicodeUTF8));
     upButton->setToolTip(QApplication::translate("Gui::ActionSelector", "Move up", 0, QApplication::UnicodeUTF8));
     downButton->setToolTip(QApplication::translate("Gui::ActionSelector", "Move down", 0, QApplication::UnicodeUTF8));
+#endif
 }
 
 void ActionSelector::changeEvent(QEvent* event)
@@ -388,49 +401,49 @@ void AccelLineEdit::keyPressEvent ( QKeyEvent * e)
     case Qt::ControlModifier:
         {
             QKeySequence ks(Qt::CTRL+key);
-            txt += (QString)(ks);
+            txt += ks.toString();
             setText(txt);
         }   break;
     case Qt::AltModifier:
         {
             QKeySequence ks(Qt::ALT+key);
-            txt += (QString)(ks);
+            txt += ks.toString();
             setText(txt);
         }   break;
     case Qt::ShiftModifier:
         {
             QKeySequence ks(Qt::SHIFT+key);
-            txt += (QString)(ks);
+            txt += ks.toString();
             setText(txt);
         }   break;
     case Qt::ControlModifier+Qt::AltModifier:
         {
             QKeySequence ks(Qt::CTRL+Qt::ALT+key);
-            txt += (QString)(ks);
+            txt += ks.toString();
             setText(txt);
         }   break;
     case Qt::ControlModifier+Qt::ShiftModifier:
         {
             QKeySequence ks(Qt::CTRL+Qt::SHIFT+key);
-            txt += (QString)(ks);
+            txt += ks.toString();
             setText(txt);
         }   break;
     case Qt::ShiftModifier+Qt::AltModifier:
         {
             QKeySequence ks(Qt::SHIFT+Qt::ALT+key);
-            txt += (QString)(ks);
+            txt += ks.toString();
             setText(txt);
         }   break;
     case Qt::ControlModifier+Qt::AltModifier+Qt::ShiftModifier:
         {
             QKeySequence ks(Qt::CTRL+Qt::ALT+Qt::SHIFT+key);
-            txt += (QString)(ks);
+            txt += ks.toString();
             setText(txt);
         }   break;
     default:
         {
             QKeySequence ks(key);
-            txt += (QString)(ks);
+            txt += ks.toString();
             setText(txt);
         }   break;
     }
@@ -447,7 +460,7 @@ void AccelLineEdit::keyPressEvent ( QKeyEvent * e)
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal dialog.
  */
-CheckListDialog::CheckListDialog( QWidget* parent, Qt::WFlags fl )
+CheckListDialog::CheckListDialog( QWidget* parent, Qt::WindowFlags fl )
     : QDialog( parent, fl )
 {
     ui.setupUi(this);
@@ -672,10 +685,10 @@ void ColorButton::onRejected()
 
 // ------------------------------------------------------------------------------
 
-UrlLabel::UrlLabel(QWidget * parent, Qt::WFlags f)
+UrlLabel::UrlLabel(QWidget * parent, Qt::WindowFlags f)
   : QLabel(parent, f)
 {
-    _url = QString::fromAscii("http://localhost");
+    _url = QString::fromLatin1("http://localhost");
     setToolTip(this->_url);
 }
 
@@ -703,7 +716,7 @@ void UrlLabel::mouseReleaseEvent (QMouseEvent *)
         PyObject* dict = PyModule_GetDict(module);
         PyObject* func = PyDict_GetItemString(dict, "open");
         if (func) {
-            PyObject* args = Py_BuildValue("(s)", (const char*)this->_url.toAscii());
+            PyObject* args = Py_BuildValue("(s)", (const char*)this->_url.toLatin1());
             PyObject* result = PyEval_CallObject(func,args);
             // decrement the args and module reference
             Py_XDECREF(result);

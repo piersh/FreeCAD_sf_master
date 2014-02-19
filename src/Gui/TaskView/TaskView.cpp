@@ -25,6 +25,12 @@
 
 #ifndef _PreComp_
 # include <boost/bind.hpp>
+# include <QAbstractButton>
+# include <QSplitter>
+# include <QActionEvent>
+# include <QAction>
+# include <QKeyEvent>
+# include <QPushButton>
 #endif
 
 #include "TaskView.h"

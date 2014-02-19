@@ -80,7 +80,7 @@ class GuiExport LocationDialog : public QDialog
     Q_OBJECT
 
 protected:
-    LocationDialog(QWidget* parent = 0, Qt::WFlags fl = 0);
+    LocationDialog(QWidget* parent = 0, Qt::WindowFlags fl = 0);
     virtual ~LocationDialog();
 
 protected:
@@ -113,7 +113,7 @@ template <class Ui>
 class LocationInterface : public LocationDialog, public Ui
 {
 public:
-    LocationInterface(QWidget* parent = 0, Qt::WFlags fl = 0)  : LocationDialog(parent, fl)
+    LocationInterface(QWidget* parent = 0, Qt::WindowFlags fl = 0)  : LocationDialog(parent, fl)
     {
         this->setupUi(this);
         this->retranslate();
@@ -125,6 +125,14 @@ public:
         Ui::retranslateUi(this);
 
         if (this->direction->count() == 0) {
+#if QT_VERSION >= 0x050000
+			this->direction->insertItems(0, QStringList()
+			 << QObject::tr("X")
+			 << QObject::tr("Y")
+			 << QObject::tr("Z")
+			 << QObject::tr("User defined...")
+			);
+#else
             this->direction->insertItems(0, QStringList()
              << QApplication::translate("Gui::LocationDialog", "X", 0, QApplication::UnicodeUTF8)
              << QApplication::translate("Gui::LocationDialog", "Y", 0, QApplication::UnicodeUTF8)
@@ -132,6 +140,7 @@ public:
              << QApplication::translate("Gui::LocationDialog", "User defined...", 0, 
                 QApplication::UnicodeUTF8)
             );
+#endif
 
             this->direction->setCurrentIndex(2);
 
@@ -141,6 +150,12 @@ public:
             this->direction->setItemData(2, QVariant::fromValue<Base::Vector3d>(Base::Vector3d(0,0,1)));
         }
         else {
+#if QT_VERSION >= 0x050000
+			this->direction->setItemText(0, QObject::tr("X"));
+            this->direction->setItemText(1, QObject::tr("Y"));
+            this->direction->setItemText(2, QObject::tr("Z"));
+            this->direction->setItemText(this->direction->count()-1, QObject::tr("User defined..."));
+#else
             this->direction->setItemText(0, QApplication::translate("Gui::LocationDialog", "X", 0,
                 QApplication::UnicodeUTF8));
             this->direction->setItemText(1, QApplication::translate("Gui::LocationDialog", "Y", 0,
@@ -150,6 +165,7 @@ public:
             this->direction->setItemText(this->direction->count()-1,
                 QApplication::translate("Gui::LocationDialog", "User defined...", 0,
                 QApplication::UnicodeUTF8));
+#endif
         }
     }
 
@@ -209,7 +225,7 @@ private:
                 }
 
                 // add a new item before the very last item
-                QString display = QString::fromAscii("(%1,%2,%3)")
+                QString display = QString::fromLatin1("(%1,%2,%3)")
                     .arg(dir.x)
                     .arg(dir.y)
                     .arg(dir.z);
@@ -247,31 +263,47 @@ public:
         Ui::retranslateUi(dlg);
 
         if (this->direction->count() == 0) {
+#if QT_VERSION >= 0x050000
+			this->direction->insertItems(0, QStringList()
+			 << QObject::tr("X")
+			 << QObject::tr("Y")
+			 << QObject::tr("Z")
+			 << QObject::tr("User defined...")
+			);
+#else
             this->direction->insertItems(0, QStringList()
-             << QApplication::translate("Gui::LocationDialog", "X", 0, QApplication::UnicodeUTF8)
-             << QApplication::translate("Gui::LocationDialog", "Y", 0, QApplication::UnicodeUTF8)
-             << QApplication::translate("Gui::LocationDialog", "Z", 0, QApplication::UnicodeUTF8)
-             << QApplication::translate("Gui::LocationDialog", "User defined...", 0, 
-                QApplication::UnicodeUTF8)
-            );
-
+			 << QApplication::translate("Gui::LocationDialog", "X", 0, QApplication::UnicodeUTF8)
+			 << QApplication::translate("Gui::LocationDialog", "Y", 0, QApplication::UnicodeUTF8)
+			 << QApplication::translate("Gui::LocationDialog", "Z", 0, QApplication::UnicodeUTF8)
+			 << QApplication::translate("Gui::LocationDialog", "User defined...", 0, 
+			    QApplication::UnicodeUTF8)
+			);
+#endif
+			
             this->direction->setCurrentIndex(2);
-
+			
             // Vector3d declared to use with QVariant see Gui/propertyeditor/PropertyItem.h
             this->direction->setItemData(0, QVariant::fromValue<Base::Vector3d>(Base::Vector3d(1,0,0)));
             this->direction->setItemData(1, QVariant::fromValue<Base::Vector3d>(Base::Vector3d(0,1,0)));
             this->direction->setItemData(2, QVariant::fromValue<Base::Vector3d>(Base::Vector3d(0,0,1)));
         }
         else {
+#if QT_VERSION >= 0x050000
+			this->direction->setItemText(0, QObject::tr("X"));
+            this->direction->setItemText(1, QObject::tr("Y"));
+            this->direction->setItemText(2, QObject::tr("Z"));
+            this->direction->setItemText(this->direction->count()-1, QObject::tr("User defined..."));
+#else
             this->direction->setItemText(0, QApplication::translate("Gui::LocationDialog", "X", 0,
-                QApplication::UnicodeUTF8));
+				QApplication::UnicodeUTF8));
             this->direction->setItemText(1, QApplication::translate("Gui::LocationDialog", "Y", 0,
-                QApplication::UnicodeUTF8));
+				QApplication::UnicodeUTF8));
             this->direction->setItemText(2, QApplication::translate("Gui::LocationDialog", "Z", 0,
-                QApplication::UnicodeUTF8));
+				QApplication::UnicodeUTF8));
             this->direction->setItemText(this->direction->count()-1,
-                QApplication::translate("Gui::LocationDialog", "User defined...", 0,
-                QApplication::UnicodeUTF8));
+				QApplication::translate("Gui::LocationDialog", "User defined...", 0,
+				QApplication::UnicodeUTF8));
+#endif
         }
     }
 
@@ -320,7 +352,7 @@ public:
         }
 
         // add a new item before the very last item
-        QString display = QString::fromAscii("(%1,%2,%3)")
+        QString display = QString::fromLatin1("(%1,%2,%3)")
             .arg(dir.x)
             .arg(dir.y)
             .arg(dir.z);
@@ -359,7 +391,7 @@ template <class Ui>
 class LocationDialogComp : public LocationDialog
 {
 public:
-    LocationDialogComp(QWidget* parent = 0, Qt::WFlags fl = 0)
+    LocationDialogComp(QWidget* parent = 0, Qt::WindowFlags fl = 0)
       : LocationDialog(parent, fl), ui(this)
     {
     }

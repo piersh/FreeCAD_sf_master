@@ -45,7 +45,7 @@ using namespace Gui::Dialog;
  */
 DlgEditFileIncludePropertyExternal::
 DlgEditFileIncludePropertyExternal(App::PropertyFileIncluded& Prop,
-                                   QWidget* parent, Qt::WFlags fl)
+                                   QWidget* parent, Qt::WindowFlags fl)
     : DlgRunExternal(parent, fl), Prop(Prop)
 {
 
@@ -65,7 +65,7 @@ int DlgEditFileIncludePropertyExternal::Do(void)
     QFileInfo file = QString::fromUtf8(Prop.getValue());
     assert(file.exists());
 
-    QString TempFile = QDir::temp().absolutePath() + QString::fromAscii("/") + file.fileName();
+    QString TempFile = QDir::temp().absolutePath() + QString::fromLatin1("/") + file.fileName();
     QFile::remove(TempFile);
 
     QFile::copy(file.absoluteFilePath(),TempFile);

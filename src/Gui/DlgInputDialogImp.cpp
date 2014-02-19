@@ -67,7 +67,7 @@ DlgInputDialogImp::~DlgInputDialogImp()
 
 void DlgInputDialogImp::textChanged( const QString &s )
 {
-    bool on = TRUE;
+    bool on = true;
 
     if (lineEdit->validator()) {
         QString str = lineEdit->text();

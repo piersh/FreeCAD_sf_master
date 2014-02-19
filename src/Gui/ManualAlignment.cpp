@@ -330,7 +330,7 @@ class AlignmentView : public Gui::AbstractSplitView
 public:
     QLabel* myLabel;
 
-    AlignmentView(Gui::Document* pcDocument, QWidget* parent, Qt::WFlags wflags=0)
+    AlignmentView(Gui::Document* pcDocument, QWidget* parent, Qt::WindowFlags wflags=0)
         : AbstractSplitView(pcDocument, parent, wflags)
     {
         QSplitter* mainSplitter=0;

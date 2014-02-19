@@ -559,6 +559,18 @@ const char * Command::endCmdHelp(void)
 
 void Command::applyCommandData(Action* action)
 {
+#if QT_VERSION >= 0x050000
+    action->setText(QObject::tr(sMenuText));
+    action->setToolTip(QObject::tr(sToolTipText));
+    if (sStatusTip)
+        action->setStatusTip(QObject::tr(sStatusTip));
+    else
+        action->setStatusTip(QObject::tr(sToolTipText));
+    if (sWhatsThis)
+        action->setWhatsThis(QObject::tr(sWhatsThis));
+    else
+        action->setWhatsThis(QObject::tr(sToolTipText));
+#else	
     action->setText(QCoreApplication::translate(
         this->className(), sMenuText, 0,
         QCoreApplication::UnicodeUTF8));
@@ -581,9 +593,10 @@ void Command::applyCommandData(Action* action)
         action->setWhatsThis(QCoreApplication::translate(
             this->className(), sToolTipText, 0,
             QCoreApplication::UnicodeUTF8));
+#endif
     QString accel = action->shortcut().toString();
     if (!accel.isEmpty()) {
-        QString tip = QString::fromAscii("(%1)\t%2")
+        QString tip = QString::fromLatin1("(%1)\t%2")
             .arg(accel).arg(action->statusTip());
         action->setStatusTip(tip);
     }
@@ -594,7 +607,7 @@ const char* Command::keySequenceToAccel(int sk) const
     QKeySequence::StandardKey type = (QKeySequence::StandardKey)sk;
     QKeySequence ks(type);
     QString qs = ks.toString();
-    QByteArray data = qs.toAscii();
+    QByteArray data = qs.toLatin1();
 #if defined (_MSC_VER)
     return _strdup((const char*)data);
 #else
@@ -650,7 +663,7 @@ Action * Command::createAction(void)
     applyCommandData(pcAction);
     if (sPixmap)
         pcAction->setIcon(Gui::BitmapFactory().pixmap(sPixmap));
-      pcAction->setShortcut(QString::fromAscii(sAccel));
+      pcAction->setShortcut(QString::fromLatin1(sAccel));
 
     return pcAction;
 }
@@ -702,7 +715,7 @@ Action * MacroCommand::createAction(void)
     pcAction->setWhatsThis(QString::fromUtf8(sWhatsThis));
     if ( sPixmap )
         pcAction->setIcon(Gui::BitmapFactory().pixmap(sPixmap));
-      pcAction->setShortcut(QString::fromAscii(sAccel));
+      pcAction->setShortcut(QString::fromLatin1(sAccel));
     return pcAction;
 }
 
@@ -872,7 +885,7 @@ Action * PythonCommand::createAction(void)
         pcAction->setStatusTip(qApp->translate(getName(), getToolTipText()));
     if (strcmp(getResource("Pixmap"),"") != 0)
         pcAction->setIcon(Gui::BitmapFactory().pixmap(getResource("Pixmap")));
-    pcAction->setShortcut     (QString::fromAscii(getAccel()));
+    pcAction->setShortcut     (QString::fromLatin1(getAccel()));
 
     return pcAction;
 }

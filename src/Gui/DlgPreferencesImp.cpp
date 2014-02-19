@@ -52,7 +52,7 @@ std::list<DlgPreferencesImp::TGroupPages> DlgPreferencesImp::_pages;
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal dialog.
  */
-DlgPreferencesImp::DlgPreferencesImp( QWidget* parent, Qt::WFlags fl )
+DlgPreferencesImp::DlgPreferencesImp( QWidget* parent, Qt::WindowFlags fl )
     : QDialog(parent, fl)
 {
     this->setupUi(this);
@@ -209,7 +209,7 @@ void DlgPreferencesImp::on_buttonApply_clicked()
                 } catch (const Base::Exception& e) {
                     listBox->setCurrentRow(i);
                     tabWidget->setCurrentIndex(j);
-                    QMessageBox::warning(this, tr("Wrong parameter"), QString::fromAscii(e.what()));
+                    QMessageBox::warning(this, tr("Wrong parameter"), QString::fromLatin1(e.what()));
                     throw;
                 }
             }

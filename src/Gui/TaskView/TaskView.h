@@ -29,9 +29,14 @@
 #include <vector>
 #include <boost/signals.hpp>
 
+#include <QScrollArea>
+
 #include <Gui/iisTaskPanel/include/iisTaskPanel>
 #include <Gui/Selection.h>
 #include "TaskWatcher.h"
+
+class QAbstractButton;
+class QSplitter;
 
 namespace App {
 class Property;

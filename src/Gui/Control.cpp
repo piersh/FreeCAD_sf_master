@@ -26,6 +26,8 @@
 #ifndef _PreComp_
 # include <QDockWidget>
 # include <QPointer>
+# include <QAction>
+# include <QTabWidget>
 #endif
 
 /// Here the FreeCAD includes sorted by Base,App,Gui......

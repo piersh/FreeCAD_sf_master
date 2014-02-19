@@ -113,7 +113,11 @@ DlgCustomCommandsImp::DlgCustomCommandsImp( QWidget* parent  )
     commandTreeWidget->setHeaderLabels(labels);
     commandTreeWidget->header()->hide();
     commandTreeWidget->setIconSize(QSize(32, 32));
+#if QT_VERSION >= 0x050000
+	commandTreeWidget->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+#else
     commandTreeWidget->header()->setResizeMode(0, QHeaderView::ResizeToContents);
+#endif
 
     categoryTreeWidget->setCurrentItem(categoryTreeWidget->topLevelItem(0));
 }
@@ -143,7 +147,7 @@ void DlgCustomCommandsImp::onGroupActivated(QTreeWidgetItem* item)
     commandTreeWidget->clear();
 
     CommandManager & cCmdMgr = Application::Instance->commandManager();
-    std::vector<Command*> aCmds = cCmdMgr.getGroupCommands(group.toAscii());
+    std::vector<Command*> aCmds = cCmdMgr.getGroupCommands(group.toLatin1());
     for (std::vector<Command*>::iterator it = aCmds.begin(); it != aCmds.end(); ++it) {
         QTreeWidgetItem* item = new QTreeWidgetItem(commandTreeWidget);
         item->setText(1, qApp->translate((*it)->className(), (*it)->getMenuText()));

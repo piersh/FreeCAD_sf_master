@@ -135,7 +135,7 @@ QString UnitsApi::schemaTranslate(Base::Quantity quant,double &factor,QString &u
 double UnitsApi::toDbl(PyObject *ArgObj,const Base::Unit &u)
 {
     if (PyString_Check(ArgObj)) 
-        QString str = QString::fromAscii(PyString_AsString(ArgObj));
+        QString str = QString::fromLatin1(PyString_AsString(ArgObj));
     else if (PyFloat_Check(ArgObj))
         double d = PyFloat_AsDouble(ArgObj);
     else if (PyInt_Check(ArgObj))

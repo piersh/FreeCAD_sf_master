@@ -136,7 +136,7 @@ void StdCmdOpen::activated(int iMsg)
     // load the files with the associated modules
     SelectModule::Dict dict = SelectModule::importHandler(fileList, selectedFilter);
     for (SelectModule::Dict::iterator it = dict.begin(); it != dict.end(); ++it) {
-        getGuiApplication()->open(it.key().toUtf8(), it.value().toAscii());
+        getGuiApplication()->open(it.key().toUtf8(), it.value().toLatin1());
     }
 }
 
@@ -199,7 +199,7 @@ void StdCmdImport::activated(int iMsg)
     for (SelectModule::Dict::iterator it = dict.begin(); it != dict.end(); ++it) {
         getGuiApplication()->importFrom(it.key().toUtf8(),
             getActiveGuiDocument()->getDocument()->getName(),
-            it.value().toAscii());
+            it.value().toLatin1());
     }
 
     std::list<Gui::MDIView*> views = getActiveGuiDocument()->getMDIViewsOfType(Gui::View3DInventor::getClassTypeId());
@@ -264,7 +264,7 @@ void StdCmdExport::activated(int iMsg)
         for (SelectModule::Dict::iterator it = dict.begin(); it != dict.end(); ++it) {
             getGuiApplication()->exportTo(it.key().toUtf8(),
                 getActiveGuiDocument()->getDocument()->getName(),
-                it.value().toAscii());
+                it.value().toLatin1());
         }
     }
 }
@@ -378,9 +378,9 @@ void StdCmdExportGraphviz::activated(int iMsg)
 #endif
     bool pathChanged = false;
 #ifdef FC_OS_WIN32
-    QString exe = QString::fromAscii("\"%1/dot\"").arg(path);
+    QString exe = QString::fromLatin1("\"%1/dot\"").arg(path);
 #else
-    QString exe = QString::fromAscii("%1/dot").arg(path);
+    QString exe = QString::fromLatin1("%1/dot").arg(path);
 #endif
     proc.setEnvironment(QProcess::systemEnvironment());
     do {
@@ -399,9 +399,9 @@ void StdCmdExportGraphviz::activated(int iMsg)
                 return;
             pathChanged = true;
 #ifdef FC_OS_WIN32
-            exe = QString::fromAscii("\"%1/dot\"").arg(path);
+            exe = QString::fromLatin1("\"%1/dot\"").arg(path);
 #else
-            exe = QString::fromAscii("%1/dot").arg(path);
+            exe = QString::fromLatin1("%1/dot").arg(path);
 #endif
         }
         else {
@@ -745,7 +745,7 @@ Action * StdCmdUndo::createAction(void)
     applyCommandData(pcAction);
     if (sPixmap)
         pcAction->setIcon(Gui::BitmapFactory().pixmap(sPixmap));
-    pcAction->setShortcut(QString::fromAscii(sAccel));
+    pcAction->setShortcut(QString::fromLatin1(sAccel));
 
     return pcAction;
 }
@@ -788,7 +788,7 @@ Action * StdCmdRedo::createAction(void)
     applyCommandData(pcAction);
     if (sPixmap)
         pcAction->setIcon(Gui::BitmapFactory().pixmap(sPixmap));
-    pcAction->setShortcut(QString::fromAscii(sAccel));
+    pcAction->setShortcut(QString::fromLatin1(sAccel));
 
     return pcAction;
 }

@@ -382,7 +382,7 @@ Action * StdCmdStatusBar::createAction(void)
 
 void StdCmdStatusBar::activated(int iMsg)
 {
-    getMainWindow()->statusBar()->setShown(iMsg != 0);
+    getMainWindow()->statusBar()->setVisible(iMsg != 0);
 }
 
 bool StdCmdStatusBar::isActive()
@@ -434,6 +434,11 @@ Action * StdCmdWindowsMenu::createAction(void)
     for ( int i=0; i<10; i++ ) {
         QAction* window = pcAction->addAction(QObject::tr(sToolTipText));
         window->setCheckable(true);
+#if QT_VERSION >= 0x050000
+		window->setToolTip(QObject::tr(sToolTipText));
+        window->setStatusTip(QObject::tr(sStatusTip));
+        window->setWhatsThis(QObject::tr(sWhatsThis));
+#else
         window->setToolTip(QCoreApplication::translate(
             this->className(), sToolTipText, 0,
             QCoreApplication::CodecForTr));
@@ -443,6 +448,7 @@ Action * StdCmdWindowsMenu::createAction(void)
         window->setWhatsThis(QCoreApplication::translate(
             this->className(), sWhatsThis, 0,
             QCoreApplication::CodecForTr));
+#endif
     }
 
     QAction* sep = pcAction->addAction(QLatin1String(""));

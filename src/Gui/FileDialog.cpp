@@ -62,7 +62,7 @@ FileDialog::~FileDialog()
 void FileDialog::onSelectedFilter(const QString& filter)
 {
     QRegExp rx(QLatin1String("\\(\\*.(\\w+)"));
-    QString suf = selectedFilter();
+    QString suf = selectedNameFilter();
     if (rx.indexIn(suf) >= 0) {
         suf = rx.cap(1);
         setDefaultSuffix(suf.toLower());
@@ -132,13 +132,13 @@ QString FileDialog::getSaveFileName (QWidget * parent, const QString & caption, 
     dlg.setAcceptMode(QFileDialog::AcceptSave);
     dlg.setDirectory(dirName);
     dlg.setOptions(options);
-    dlg.setFilters(filter.split(QLatin1String(";;")));
-    dlg.onSelectedFilter(dlg.selectedFilter());
+    dlg.setNameFilters(filter.split(QLatin1String(";;")));
+    dlg.onSelectedFilter(dlg.selectedNameFilter());
     dlg.setNameFilterDetailsVisible(true);
     dlg.setConfirmOverwrite(true);
     if (dlg.exec() == QDialog::Accepted) {
         if (selectedFilter)
-            *selectedFilter = dlg.selectedFilter();
+            *selectedFilter = dlg.selectedNameFilter();
         file = dlg.selectedFiles().front();
     }
 #else
@@ -211,11 +211,11 @@ QString FileDialog::getOpenFileName(QWidget * parent, const QString & caption, c
     dlg.setAcceptMode(QFileDialog::AcceptOpen);
     dlg.setDirectory(dirName);
     dlg.setOptions(options);
-    dlg.setFilters(filter.split(QLatin1String(";;")));
+    dlg.setNameFilters(filter.split(QLatin1String(";;")));
     dlg.setNameFilterDetailsVisible(true);
     if (dlg.exec() == QDialog::Accepted) {
         if (selectedFilter)
-            *selectedFilter = dlg.selectedFilter();
+            *selectedFilter = dlg.selectedNameFilter();
         file = dlg.selectedFiles().front();
     }
 #else
@@ -269,11 +269,11 @@ QStringList FileDialog::getOpenFileNames (QWidget * parent, const QString & capt
     dlg.setAcceptMode(QFileDialog::AcceptOpen);
     dlg.setDirectory(dirName);
     dlg.setOptions(options);
-    dlg.setFilters(filter.split(QLatin1String(";;")));
+    dlg.setNameFilters(filter.split(QLatin1String(";;")));
     dlg.setNameFilterDetailsVisible(true);
     if (dlg.exec() == QDialog::Accepted) {
         if (selectedFilter)
-            *selectedFilter = dlg.selectedFilter();
+            *selectedFilter = dlg.selectedNameFilter();
         files = dlg.selectedFiles();
     }
 #else
@@ -330,7 +330,7 @@ void FileDialog::setWorkingDirectory(const QString& dir)
 
 /* TRANSLATOR Gui::FileOptionsDialog */
 
-FileOptionsDialog::FileOptionsDialog( QWidget* parent, Qt::WFlags fl )
+FileOptionsDialog::FileOptionsDialog( QWidget* parent, Qt::WindowFlags fl )
   : QFileDialog( parent, fl )
 {
     extensionButton = new QPushButton( this );
@@ -364,7 +364,7 @@ void FileOptionsDialog::accept()
         QFileInfo fi(fn);
         QString ext = fi.suffix();
         ext.prepend(QLatin1String("*."));
-        QStringList filters = this->filters();
+        QStringList filters = this->nameFilters();
         bool ok=false;
         // Compare the given suffix with the suffixes of all filters
         QString filter;
@@ -380,14 +380,14 @@ void FileOptionsDialog::accept()
         if (!ok) {
             filter = tr("All files (*.*)");
             filters << filter;
-            setFilters(filters);
+            setNameFilters(filters);
         }
 
         // empty the line edit
         filename->blockSignals(true);
         filename->clear();
         filename->blockSignals(false);
-        selectFilter(filter);
+        selectNameFilter(filter);
 
         return;
     }
@@ -395,13 +395,13 @@ void FileOptionsDialog::accept()
         QFileInfo fi(fn);
         QString ext = fi.completeSuffix();
         QRegExp rx(QLatin1String("\\(\\*.(\\w+)"));
-        QString suf = selectedFilter();
+        QString suf = selectedNameFilter();
         if (rx.indexIn(suf) >= 0)
             suf = rx.cap(1);
         if (ext.isEmpty())
             setDefaultSuffix(suf);
         else if (ext.toLower() != suf.toLower()) {
-            fn = QString::fromAscii("%1.%2").arg(fn).arg(suf);
+            fn = QString::fromLatin1("%1.%2").arg(fn).arg(suf);
             selectFile(fn);
         }
     }
@@ -641,7 +641,7 @@ SelectModule::SelectModule (const QString& type, const SelectModule::Dict& types
             module = module.left(pos);
         }
 
-        button->setText(QString::fromAscii("%1 (%2)").arg(filter).arg(module));
+        button->setText(QString::fromLatin1("%1 (%2)").arg(filter).arg(module));
         button->setObjectName(it.value());
         gridLayout1->addWidget(button, index, 0, 1, 1);
         group->addButton(button, index);
@@ -716,7 +716,7 @@ SelectModule::Dict SelectModule::exportHandler(const QStringList& fileNames, con
         std::map<std::string, std::string>::const_iterator it;
         it = filterList.find((const char*)filter.toUtf8());
         if (it != filterList.end()) {
-            QString module = QString::fromAscii(it->second.c_str());
+            QString module = QString::fromLatin1(it->second.c_str());
             for (QStringList::const_iterator it = fileNames.begin(); it != fileNames.end(); ++it) {
                 dict[*it] = module;
             }
@@ -731,19 +731,19 @@ SelectModule::Dict SelectModule::exportHandler(const QStringList& fileNames, con
     for (QStringList::const_iterator it = fileNames.begin(); it != fileNames.end(); ++it) {
         QFileInfo fi(*it);
         QString ext = fi.completeSuffix().toLower();
-        std::map<std::string, std::string> filters = App::GetApplication().getExportFilters(ext.toAscii());
+        std::map<std::string, std::string> filters = App::GetApplication().getExportFilters(ext.toLatin1());
         
         if (filters.empty()) {
             ext = fi.suffix().toLower();
-            filters = App::GetApplication().getExportFilters(ext.toAscii());
+            filters = App::GetApplication().getExportFilters(ext.toLatin1());
         }
 
         fileExtension[ext].push_back(*it);
         for (std::map<std::string, std::string>::iterator jt = filters.begin(); jt != filters.end(); ++jt)
-            filetypeHandler[ext][QString::fromUtf8(jt->first.c_str())] = QString::fromAscii(jt->second.c_str());
+            filetypeHandler[ext][QString::fromUtf8(jt->first.c_str())] = QString::fromLatin1(jt->second.c_str());
         // set the default module handler
         if (!filters.empty())
-            dict[*it] = QString::fromAscii(filters.begin()->second.c_str());
+            dict[*it] = QString::fromLatin1(filters.begin()->second.c_str());
     }
 
     for (QMap<QString, SelectModule::Dict>::const_iterator it = filetypeHandler.begin(); 
@@ -778,7 +778,7 @@ SelectModule::Dict SelectModule::importHandler(const QStringList& fileNames, con
         std::map<std::string, std::string>::const_iterator it;
         it = filterList.find((const char*)filter.toUtf8());
         if (it != filterList.end()) {
-            QString module = QString::fromAscii(it->second.c_str());
+            QString module = QString::fromLatin1(it->second.c_str());
             for (QStringList::const_iterator it = fileNames.begin(); it != fileNames.end(); ++it) {
                 dict[*it] = module;
             }
@@ -793,19 +793,19 @@ SelectModule::Dict SelectModule::importHandler(const QStringList& fileNames, con
     for (QStringList::const_iterator it = fileNames.begin(); it != fileNames.end(); ++it) {
         QFileInfo fi(*it);
         QString ext = fi.completeSuffix().toLower();
-        std::map<std::string, std::string> filters = App::GetApplication().getImportFilters(ext.toAscii());
+        std::map<std::string, std::string> filters = App::GetApplication().getImportFilters(ext.toLatin1());
         
         if (filters.empty()) {
             ext = fi.suffix().toLower();
-            filters = App::GetApplication().getImportFilters(ext.toAscii());
+            filters = App::GetApplication().getImportFilters(ext.toLatin1());
         }
 
         fileExtension[ext].push_back(*it);
         for (std::map<std::string, std::string>::iterator jt = filters.begin(); jt != filters.end(); ++jt)
-            filetypeHandler[ext][QString::fromUtf8(jt->first.c_str())] = QString::fromAscii(jt->second.c_str());
+            filetypeHandler[ext][QString::fromUtf8(jt->first.c_str())] = QString::fromLatin1(jt->second.c_str());
         // set the default module handler
         if (!filters.empty())
-            dict[*it] = QString::fromAscii(filters.begin()->second.c_str());
+            dict[*it] = QString::fromLatin1(filters.begin()->second.c_str());
     }
 
     for (QMap<QString, SelectModule::Dict>::const_iterator it = filetypeHandler.begin(); 

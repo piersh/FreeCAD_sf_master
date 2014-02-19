@@ -46,8 +46,13 @@ Handled::Handled()
 
 Handled::~Handled()
 {
+#if QT_VERSION >= 0x050000
+    if (_lRefCount->load() != 0) 
+#else
     if ((int)(*_lRefCount) != 0)
+#endif
         throw Exception("Reference counter of deleted object is not zero!!!!!\n");
+	
     delete _lRefCount;
 }
 
@@ -66,7 +71,11 @@ void Handled::unref() const
 
 int Handled::getRefCount(void) const
 {
+#if QT_VERSION >= 0x050000
+    return _lRefCount->load();
+#else
     return (int)(*_lRefCount);
+#endif
 }
 
 const Handled& Handled::operator = (const Handled&)

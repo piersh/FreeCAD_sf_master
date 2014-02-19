@@ -198,10 +198,15 @@ void ToolBarManager::setup(ToolBarItem* toolBarItems)
         bool toolbar_added = false;
 
         if (!toolbar) {
+#if QT_VERSION >= 0x050000
+			toolbar = getMainWindow()->addToolBar(QApplication::translate("Workbench",
+																		  toolbarName.c_str()));
+#else
             toolbar = getMainWindow()->addToolBar(
                 QApplication::translate("Workbench",
                                         toolbarName.c_str(),
                                         0, QApplication::UnicodeUTF8)); // i18n
+#endif
             toolbar->setObjectName(name);
             toolbar->setVisible(visible);
             toolbar_added = true;
@@ -260,7 +265,7 @@ void ToolBarManager::setup(ToolBarItem* item, QToolBar* toolbar) const
     QList<QAction*> actions = toolbar->actions();
     for (QList<ToolBarItem*>::ConstIterator it = items.begin(); it != items.end(); ++it) {
         // search for the action item
-        QAction* action = findAction(actions, QString::fromAscii((*it)->command().c_str()));
+        QAction* action = findAction(actions, QString::fromLatin1((*it)->command().c_str()));
         if (!action) {
             if ((*it)->command() == "Separator") {
                 action = toolbar->addSeparator();
@@ -271,7 +276,7 @@ void ToolBarManager::setup(ToolBarItem* item, QToolBar* toolbar) const
             }
 
             // set the tool button user data
-            if (action) action->setData(QString::fromAscii((*it)->command().c_str()));
+            if (action) action->setData(QString::fromLatin1((*it)->command().c_str()));
         } else {
             // Note: For toolbars we do not remove and readd the actions
             // because this causes flicker effects. So, it could happen that the order of 
@@ -322,10 +327,15 @@ void ToolBarManager::retranslate() const
     QList<QToolBar*> toolbars = toolBars();
     for (QList<QToolBar*>::Iterator it = toolbars.begin(); it != toolbars.end(); ++it) {
         QByteArray toolbarName = (*it)->objectName().toUtf8();
+#if QT_VERSION >= 0x050000
+		(*it)->setWindowTitle(QApplication::translate("Workbench",
+													  (const char*)toolbarName));
+#else
         (*it)->setWindowTitle(
             QApplication::translate("Workbench",
                                     (const char*)toolbarName,
                                     0, QApplication::UnicodeUTF8));
+#endif
     }
 }
 

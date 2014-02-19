@@ -52,11 +52,11 @@ InputField::InputField ( QWidget * parent )
     iconLabel->setCursor(Qt::ArrowCursor);
     QPixmap pixmap = BitmapFactory().pixmapFromSvg(":/icons/button_valid.svg", QSize(sizeHint().height(),sizeHint().height()));
     iconLabel->setPixmap(pixmap);
-    iconLabel->setStyleSheet(QString::fromAscii("QLabel { border: none; padding: 0px; }"));
+    iconLabel->setStyleSheet(QString::fromLatin1("QLabel { border: none; padding: 0px; }"));
     iconLabel->hide();
     connect(this, SIGNAL(textChanged(const QString&)), this, SLOT(updateIconLabel(const QString&)));
     int frameWidth = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
-    setStyleSheet(QString::fromAscii("QLineEdit { padding-right: %1px } ").arg(iconLabel->sizeHint().width() + frameWidth + 1));
+    setStyleSheet(QString::fromLatin1("QLineEdit { padding-right: %1px } ").arg(iconLabel->sizeHint().width() + frameWidth + 1));
     QSize msz = minimumSizeHint();
     setMinimumSize(qMax(msz.width(), iconLabel->sizeHint().height() + frameWidth * 2 + 2),
                    qMax(msz.height(), iconLabel->sizeHint().height() + frameWidth * 2 + 2));
@@ -88,7 +88,7 @@ void InputField::contextMenuEvent(QContextMenuEvent *event)
 {
     QMenu *editMenu = createStandardContextMenu();
     editMenu->setTitle(tr("Edit"));
-    QMenu* menu = new QMenu(QString::fromAscii("InputFieldContextmenu"));
+    QMenu* menu = new QMenu(QString::fromLatin1("InputFieldContextmenu"));
 
     menu->addMenu(editMenu);
     menu->addSeparator();
@@ -138,10 +138,10 @@ void InputField::newInput(const QString & text)
         res = Quantity::parse(text);
     }catch(Base::Exception &e){
         ErrorText = e.what();
-        this->setToolTip(QString::fromAscii(ErrorText.c_str()));
+        this->setToolTip(QString::fromLatin1(ErrorText.c_str()));
         QPixmap pixmap = BitmapFactory().pixmapFromSvg(":/icons/button_invalid.svg", QSize(sizeHint().height(),sizeHint().height()));
         iconLabel->setPixmap(pixmap);
-        parseError(QString::fromAscii(ErrorText.c_str()));
+        parseError(QString::fromLatin1(ErrorText.c_str()));
         return;
     }
 
@@ -149,7 +149,7 @@ void InputField::newInput(const QString & text)
     iconLabel->setPixmap(pixmap);
 
     ErrorText = "";
-    this->setToolTip(QString::fromAscii(ErrorText.c_str()));
+    this->setToolTip(QString::fromLatin1(ErrorText.c_str()));
     actQuantity = res;
     double dFactor;
     res.getUserString(dFactor,actUnitStr);

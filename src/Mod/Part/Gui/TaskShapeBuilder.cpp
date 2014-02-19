@@ -187,7 +187,7 @@ void ShapeBuilderWidget::createEdge()
     }
 
     QString cmd;
-    cmd = QString::fromAscii(
+    cmd = QString::fromLatin1(
         "_=Part.makeLine(%1, %2)\n"
         "if _.isNull(): raise Exception('Failed to create edge')\n"
         "App.ActiveDocument.addObject('Part::Feature','Edge').Shape=_\n"
@@ -195,7 +195,7 @@ void ShapeBuilderWidget::createEdge()
     ).arg(elements[0]).arg(elements[1]);
 
     Gui::Application::Instance->activeDocument()->openCommand("Edge");
-    Gui::Application::Instance->runPythonCode((const char*)cmd.toAscii(), false, false);
+    Gui::Application::Instance->runPythonCode((const char*)cmd.toLatin1(), false, false);
     Gui::Application::Instance->activeDocument()->commitCommand();
 }
 
@@ -224,7 +224,7 @@ void ShapeBuilderWidget::createFace()
 
     QString cmd;
     if (d->ui.checkPlanar->isChecked()) {
-        cmd = QString::fromAscii(
+        cmd = QString::fromLatin1(
             "_=Part.Face(Part.Wire(Part.__sortEdges__(%1)))\n"
             "if _.isNull(): raise Exception('Failed to create face')\n"
             "App.ActiveDocument.addObject('Part::Feature','Face').Shape=_\n"
@@ -232,7 +232,7 @@ void ShapeBuilderWidget::createFace()
         ).arg(list);
     }
     else {
-        cmd = QString::fromAscii(
+        cmd = QString::fromLatin1(
             "_=Part.makeFilledFace(Part.__sortEdges__(%1))\n"
             "if _.isNull(): raise Exception('Failed to create face')\n"
             "App.ActiveDocument.addObject('Part::Feature','Face').Shape=_\n"
@@ -241,7 +241,7 @@ void ShapeBuilderWidget::createFace()
     }
 
     Gui::Application::Instance->activeDocument()->openCommand("Face");
-    Gui::Application::Instance->runPythonCode((const char*)cmd.toAscii(), false, false);
+    Gui::Application::Instance->runPythonCode((const char*)cmd.toLatin1(), false, false);
     Gui::Application::Instance->activeDocument()->commitCommand();
 }
 
@@ -280,7 +280,7 @@ void ShapeBuilderWidget::createShell()
     }
 
     QString cmd;
-    cmd = QString::fromAscii(
+    cmd = QString::fromLatin1(
         "_=Part.Shell(%1)\n"
         "if _.isNull(): raise Exception('Failed to create shell')\n"
         "App.ActiveDocument.addObject('Part::Feature','Shell').Shape=_.removeSplitter()\n"
@@ -288,7 +288,7 @@ void ShapeBuilderWidget::createShell()
     ).arg(list);
 
     Gui::Application::Instance->activeDocument()->openCommand("Shell");
-    Gui::Application::Instance->runPythonCode((const char*)cmd.toAscii(), false, false);
+    Gui::Application::Instance->runPythonCode((const char*)cmd.toLatin1(), false, false);
     Gui::Application::Instance->activeDocument()->commitCommand();
 }
 
@@ -312,7 +312,7 @@ void ShapeBuilderWidget::createSolid()
     }
 
     QString cmd;
-    cmd = QString::fromAscii(
+    cmd = QString::fromLatin1(
         "shell=%1\n"
         "if shell.ShapeType != 'Shell': raise Exception('Part object is not a shell')\n"
         "_=Part.Solid(shell)\n"
@@ -322,7 +322,7 @@ void ShapeBuilderWidget::createSolid()
     ).arg(line);
 
     Gui::Application::Instance->activeDocument()->openCommand("Solid");
-    Gui::Application::Instance->runPythonCode((const char*)cmd.toAscii(), false, false);
+    Gui::Application::Instance->runPythonCode((const char*)cmd.toLatin1(), false, false);
     Gui::Application::Instance->activeDocument()->commitCommand();
 }
 

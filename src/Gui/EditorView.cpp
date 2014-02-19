@@ -403,7 +403,7 @@ void EditorView::setCurrentFileName(const QString &fileName)
     if (fileName.isEmpty())
         shownName = tr("untitled[*]");
     else
-        shownName = QString::fromAscii("%1[*]").arg(fileName);
+        shownName = QString::fromLatin1("%1[*]").arg(fileName);
     shownName += tr(" - Editor");
     setWindowTitle(shownName);
     setWindowModified(false);

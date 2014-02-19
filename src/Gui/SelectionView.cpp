@@ -82,7 +82,7 @@ void SelectionView::OnChange(Gui::SelectionSingleton::SubjectType &rCaller,
             temp += Reason.pSubName;
         }
 
-        new QListWidgetItem(QString::fromAscii(temp.c_str()), selectionView);
+        new QListWidgetItem(QString::fromLatin1(temp.c_str()), selectionView);
     }
     else if (Reason.Type == SelectionChanges::ClrSelection) {
         // remove all items
@@ -117,7 +117,7 @@ void SelectionView::OnChange(Gui::SelectionSingleton::SubjectType &rCaller,
                 temp += ".";
                 temp += it->SubName;
             }
-            new QListWidgetItem(QString::fromAscii(temp.c_str()), selectionView);
+            new QListWidgetItem(QString::fromLatin1(temp.c_str()), selectionView);
         }
     }
 }

@@ -24,6 +24,11 @@
 
 #include <sstream>
 
+#include <QPushButton>
+#include <QButtonGroup>
+#include <QLabel>
+#include <QHeaderView>
+
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Edge.hxx>

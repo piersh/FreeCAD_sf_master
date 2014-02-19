@@ -40,7 +40,9 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QTextDocument>
-
+#if QT_VERSION >= 0x050000
+#include <QStandardPaths>
+#endif
 #include <App/Document.h>
 
 #include "DownloadItem.h"
@@ -167,7 +169,11 @@ NetworkAccessManager::NetworkAccessManager(QObject *parent)
             SLOT(proxyAuthenticationRequired(const QNetworkProxy&, QAuthenticator*)));
 
     QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
+#if QT_VERSION >= 0x050000
+	QString location = QStandardPaths::standardLocations(QStandardPaths::CacheLocation).first();
+#else
     QString location = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
+#endif
     diskCache->setCacheDirectory(location);
     setCache(diskCache);
 }
@@ -184,7 +190,7 @@ void NetworkAccessManager::authenticationRequired(QNetworkReply *reply, QAuthent
     dialog.adjustSize();
 
     QString introMessage = tr("<qt>Enter username and password for \"%1\" at %2</qt>");
-    introMessage = introMessage.arg(Qt::escape(reply->url().toString())).arg(Qt::escape(reply->url().toString()));
+    introMessage = introMessage.arg(reply->url().toString().toHtmlEscaped()).arg(reply->url().toString().toHtmlEscaped());
     passwordDialog.siteDescription->setText(introMessage);
     passwordDialog.siteDescription->setWordWrap(true);
 
@@ -206,7 +212,7 @@ void NetworkAccessManager::proxyAuthenticationRequired(const QNetworkProxy &prox
     dialog.adjustSize();
 
     QString introMessage = tr("<qt>Connect to proxy \"%1\" using:</qt>");
-    introMessage = introMessage.arg(Qt::escape(proxy.hostName()));
+    introMessage = introMessage.arg(proxy.hostName().toHtmlEscaped());
     proxyDialog.siteDescription->setText(introMessage);
     proxyDialog.siteDescription->setWordWrap(true);
 
@@ -271,8 +277,12 @@ void DownloadItem::init()
 
 QString DownloadItem::getDownloadDirectory() const
 {
-    QString exe = QString::fromAscii(App::GetApplication().getExecutableName());
+    QString exe = QString::fromLatin1(App::GetApplication().getExecutableName());
+#if QT_VERSION >= 0x050000
+	QString path = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+#else
     QString path = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+#endif
     QString dirPath = QDir(path).filePath(exe);
     Base::Reference<ParameterGrp> hPath = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
                                ->GetGroup("Preferences")->GetGroup("General");
@@ -367,12 +377,12 @@ void DownloadItem::open()
         if (doc) {
             for (SelectModule::Dict::iterator it = dict.begin(); it != dict.end(); ++it) {
                 Gui::Application::Instance->importFrom(it.key().toUtf8(),
-                    doc->getDocument()->getName(), it.value().toAscii());
+                    doc->getDocument()->getName(), it.value().toLatin1());
             }
         }
         else {
             for (SelectModule::Dict::iterator it = dict.begin(); it != dict.end(); ++it) {
-                Gui::Application::Instance->open(it.key().toUtf8(), it.value().toAscii());
+                Gui::Application::Instance->open(it.key().toUtf8(), it.value().toLatin1());
             }
         }
     }

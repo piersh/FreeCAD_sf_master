@@ -64,7 +64,7 @@ using namespace std;
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  TRUE to construct a modal dialog.
  */
-DlgDisplayPropertiesImp::DlgDisplayPropertiesImp( QWidget* parent, Qt::WFlags fl )
+DlgDisplayPropertiesImp::DlgDisplayPropertiesImp( QWidget* parent, Qt::WindowFlags fl )
   : QDialog( parent, fl )
 {
     this->setupUi(this);
@@ -273,14 +273,14 @@ void DlgDisplayPropertiesImp::on_changeMode_activated(const QString& s)
         App::Property* prop = (*It)->getPropertyByName("DisplayMode");
         if (prop && prop->getTypeId() == App::PropertyEnumeration::getClassTypeId()) {
             App::PropertyEnumeration* Display = (App::PropertyEnumeration*)prop;
-            Display->setValue((const char*)s.toAscii());
+            Display->setValue((const char*)s.toLatin1());
         }
     }
 }
 
 void DlgDisplayPropertiesImp::on_changePlot_activated(const QString&s)
 {
-    Base::Console().Log("Plot = %s\n",(const char*)s.toAscii());
+    Base::Console().Log("Plot = %s\n",(const char*)s.toLatin1());
 }
 
 /**
@@ -405,7 +405,7 @@ void DlgDisplayPropertiesImp::setDisplayModes(const std::vector<Gui::ViewProvide
         App::Property* prop = (*it)->getPropertyByName("DisplayMode");
         if (prop && prop->getTypeId() == App::PropertyEnumeration::getClassTypeId()) {
             App::PropertyEnumeration* display = static_cast<App::PropertyEnumeration*>(prop);
-            QString activeMode = QString::fromAscii(display->getValueAsString());
+            QString activeMode = QString::fromLatin1(display->getValueAsString());
             int index = changeMode->findText(activeMode);
             if (index != -1) {
                 changeMode->setCurrentIndex(index);

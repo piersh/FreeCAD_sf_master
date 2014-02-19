@@ -37,7 +37,7 @@ namespace Dialog {
 class DlgProjectInformationImp : public QDialog, public Ui_DlgProjectInformation
 {
 public:
-    DlgProjectInformationImp( App::Document* doc, QWidget* parent = 0, Qt::WFlags fl = 0 );
+    DlgProjectInformationImp( App::Document* doc, QWidget* parent = 0, Qt::WindowFlags fl = 0 );
     ~DlgProjectInformationImp();
 
 protected:

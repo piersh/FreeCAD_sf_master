@@ -229,17 +229,17 @@ Action * StdCmdFreezeViews::createAction(void)
     // add the action items
     saveView = pcAction->addAction(QObject::tr("Save views..."));
     pcAction->addAction(QObject::tr("Load views..."));
-    pcAction->addAction(QString::fromAscii(""))->setSeparator(true);
+    pcAction->addAction(QString::fromLatin1(""))->setSeparator(true);
     freezeView = pcAction->addAction(QObject::tr("Freeze view"));
-    freezeView->setShortcut(QString::fromAscii(sAccel));
+    freezeView->setShortcut(QString::fromLatin1(sAccel));
     clearView = pcAction->addAction(QObject::tr("Clear views"));
-    separator = pcAction->addAction(QString::fromAscii(""));
+    separator = pcAction->addAction(QString::fromLatin1(""));
     separator->setSeparator(true);
     offset = pcAction->actions().count();
 
     // allow up to 50 views
     for (int i=0; i<maxViews; i++)
-        pcAction->addAction(QString::fromAscii(""))->setVisible(false);
+        pcAction->addAction(QString::fromLatin1(""))->setVisible(false);
 
     return pcAction;
 }
@@ -266,7 +266,7 @@ void StdCmdFreezeViews::activated(int iMsg)
                 savedViews++;
                 QString viewnr = QString(QObject::tr("Restore view &%1")).arg(index+1);
                 (*it)->setText(viewnr);
-                (*it)->setToolTip(QString::fromAscii(ppReturn));
+                (*it)->setToolTip(QString::fromLatin1(ppReturn));
                 (*it)->setVisible(true);
                 if (index < 9) {
                     int accel = Qt::CTRL+Qt::Key_1;
@@ -286,8 +286,8 @@ void StdCmdFreezeViews::activated(int iMsg)
         // Activate a view
         QList<QAction*> acts = pcAction->actions();
         QString data = acts[iMsg]->toolTip();
-        QString send = QString::fromAscii("SetCamera %1").arg(data);
-        getGuiApplication()->sendMsgToActiveView(send.toAscii());
+        QString send = QString::fromLatin1("SetCamera %1").arg(data);
+        getGuiApplication()->sendMsgToActiveView(send.toLatin1());
     }
 }
 
@@ -316,14 +316,14 @@ void StdCmdFreezeViews::onSaveViews()
             // remove the first line because it's a comment like '#Inventor V2.1 ascii'
             QString viewPos;
             if ( !data.isEmpty() ) {
-                QStringList lines = data.split(QString::fromAscii("\n"));
+                QStringList lines = data.split(QString::fromLatin1("\n"));
                 if ( lines.size() > 1 ) {
                     lines.pop_front();
-                    viewPos = lines.join(QString::fromAscii(" "));
+                    viewPos = lines.join(QString::fromLatin1(" "));
                 }
             }
 
-            str << "    <Camera settings=\"" << viewPos.toAscii().constData() << "\"/>" << endl;
+            str << "    <Camera settings=\"" << viewPos.toLatin1().constData() << "\"/>" << endl;
         }
 
         str << "  </Views>" << endl;
@@ -364,7 +364,7 @@ void StdCmdFreezeViews::onRestoreViews()
     if (!xmlDocument.setContent(&file, true, &errorStr, &errorLine, &errorColumn)) {
         std::cerr << "Parse error in XML content at line " << errorLine
                   << ", column " << errorColumn << ": "
-                  << (const char*)errorStr.toAscii() << std::endl;
+                  << (const char*)errorStr.toLatin1() << std::endl;
         return;
     }
 
@@ -376,18 +376,18 @@ void StdCmdFreezeViews::onRestoreViews()
     }
 
     bool ok;
-    int scheme = root.attribute(QString::fromAscii("SchemaVersion")).toInt(&ok);
+    int scheme = root.attribute(QString::fromLatin1("SchemaVersion")).toInt(&ok);
     if (!ok) return;
     // SchemeVersion "1"
     if (scheme == 1) {
         // read the views, ignore the attribute 'Count'
-        QDomElement child = root.firstChildElement(QString::fromAscii("Views"));
-        QDomElement views = child.firstChildElement(QString::fromAscii("Camera"));
+        QDomElement child = root.firstChildElement(QString::fromLatin1("Views"));
+        QDomElement views = child.firstChildElement(QString::fromLatin1("Camera"));
         QStringList cameras;
         while (!views.isNull()) {
-            QString setting = views.attribute(QString::fromAscii("settings"));
+            QString setting = views.attribute(QString::fromLatin1("settings"));
             cameras << setting;
-            views = views.nextSiblingElement(QString::fromAscii("Camera"));
+            views = views.nextSiblingElement(QString::fromLatin1("Camera"));
         }
 
         // use this rather than the attribute 'Count' because it could be
@@ -592,7 +592,23 @@ void StdCmdDrawStyle::languageChange()
         return;
     Gui::ActionGroup* pcAction = qobject_cast<Gui::ActionGroup*>(_pcAction);
     QList<QAction*> a = pcAction->actions();
-
+	
+#if QT_VERSION >= 0x050000
+    a[0]->setText(QObject::tr("As is"));
+    a[0]->setToolTip(QObject::tr("Normal mode"));
+	
+    a[1]->setText(QObject::tr("Flat lines"));
+    a[1]->setToolTip(QObject::tr("Flat lines mode"));
+	
+    a[2]->setText(QObject::tr("Shaded"));
+    a[2]->setToolTip(QObject::tr("Shaded mode"));
+	
+    a[3]->setText(QObject::tr("Wireframe"));
+    a[3]->setToolTip(QObject::tr("Wireframe mode"));
+	
+    a[4]->setText(QObject::tr("Points"));
+    a[4]->setToolTip(QObject::tr("Points mode"));
+#else
     a[0]->setText(QCoreApplication::translate(
         "Std_DrawStyle", "As is", 0,
         QCoreApplication::CodecForTr));
@@ -627,6 +643,7 @@ void StdCmdDrawStyle::languageChange()
     a[4]->setToolTip(QCoreApplication::translate(
         "Std_DrawStyle", "Points mode", 0,
         QCoreApplication::CodecForTr));
+#endif
 }
 
 void StdCmdDrawStyle::updateIcon(const MDIView *view)
@@ -1322,6 +1339,28 @@ Action * StdViewDockUndockFullscreen::createAction(void)
 {
     ActionGroup* pcAction = new ActionGroup(this, getMainWindow());
     pcAction->setDropDownMenu(true);
+#if QT_VERSION >= 0x050000
+    pcAction->setText(QObject::tr(sMenuText));
+	
+    QAction* docked = pcAction->addAction(QObject::tr(QT_TR_NOOP("Docked")));
+    docked->setToolTip(QObject::tr(sToolTipText));
+    docked->setStatusTip(QObject::tr(sStatusTip));
+    docked->setWhatsThis(QObject::tr(sWhatsThis));
+    docked->setShortcut(Qt::Key_D);
+    docked->setCheckable(true);
+	
+    QAction* undocked = pcAction->addAction(QObject::tr(QT_TR_NOOP("Undocked")));
+    undocked->setToolTip(QObject::tr(sToolTipText));
+    undocked->setStatusTip(QObject::tr(sStatusTip));
+    undocked->setWhatsThis(QObject::tr(sWhatsThis));
+    undocked->setShortcut(Qt::Key_U);
+    undocked->setCheckable(true);
+	
+    QAction* fullscr = pcAction->addAction(QObject::tr(QT_TR_NOOP("Fullscreen")));
+    fullscr->setToolTip(QObject::tr(sToolTipText));
+    fullscr->setStatusTip(QObject::tr(sStatusTip));
+    fullscr->setWhatsThis(QObject::tr(sWhatsThis));
+#else
     pcAction->setText(QCoreApplication::translate(
         this->className(), sMenuText, 0,
         QCoreApplication::CodecForTr));
@@ -1362,6 +1401,7 @@ Action * StdViewDockUndockFullscreen::createAction(void)
     fullscr->setWhatsThis(QCoreApplication::translate(
         this->className(), sWhatsThis, 0,
         QCoreApplication::CodecForTr));
+#endif
     fullscr->setShortcut(Qt::Key_F11);
     fullscr->setCheckable(true);
     fullscr->setIcon(Gui::BitmapFactory().pixmap("view-fullscreen"));
@@ -1438,12 +1478,12 @@ void StdViewScreenShot::activated(int iMsg)
 
         Base::Reference<ParameterGrp> hExt = App::GetApplication().GetUserParameter().GetGroup("BaseApp")
                                    ->GetGroup("Preferences")->GetGroup("General");
-        QString ext = QString::fromAscii(hExt->GetASCII("OffscreenImageFormat").c_str());
+        QString ext = QString::fromLatin1(hExt->GetASCII("OffscreenImageFormat").c_str());
 
         QStringList filter;
         QString selFilter;
         for (QStringList::Iterator it = formats.begin(); it != formats.end(); ++it) {
-            filter << QString::fromAscii("%1 %2 (*.%3)").arg((*it).toUpper()).
+            filter << QString::fromLatin1("%1 %2 (*.%3)").arg((*it).toUpper()).
                 arg(QObject::tr("files")).arg((*it).toLower());
             if (ext == *it)
                 selFilter = filter.last();
@@ -1453,7 +1493,7 @@ void StdViewScreenShot::activated(int iMsg)
         fd.setFileMode(QFileDialog::AnyFile);
         fd.setAcceptMode(QFileDialog::AcceptSave);
         fd.setWindowTitle(QObject::tr("Save picture"));
-        fd.setFilters(filter);
+        fd.setNameFilters(filter);
         if (!selFilter.isEmpty())
             fd.selectNameFilter(selFilter);
 
@@ -1464,7 +1504,7 @@ void StdViewScreenShot::activated(int iMsg)
 
         fd.setOptionsWidget(FileOptionsDialog::ExtensionRight, opt);
         fd.setConfirmOverwrite(true);
-        opt->onSelectedFilter(fd.selectedFilter());
+        opt->onSelectedFilter(fd.selectedNameFilter());
         QObject::connect(&fd, SIGNAL(filterSelected(const QString&)),
                          opt, SLOT(onSelectedFilter(const QString&)));
 
@@ -1490,7 +1530,7 @@ void StdViewScreenShot::activated(int iMsg)
                 }
             }
 
-            hExt->SetASCII("OffscreenImageFormat", (const char*)format.toAscii());
+            hExt->SetASCII("OffscreenImageFormat", (const char*)format.toLatin1());
 
             // which background chosen
             const char* background;
