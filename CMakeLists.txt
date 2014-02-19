@@ -150,6 +150,8 @@ OPTION(FREECAD_USE_FREETYPE "Builds the features using FreeType libs" ON)
 OPTION(FREECAD_BUILD_FEM_NETGEN "Build the FreeCAD FEM module with the NETGEN mesher" OFF)
 endif(MSVC)
 
+OPTION(FREECAD_USE_QT5 "Use Qt5 instead of Qt4" OFF)
+
 # if this is set override some options
 if (FREECAD_BUILD_DEBIAN)
     set(FREECAD_USE_EXTERNAL_ZIPIOS ON)
@@ -378,49 +380,86 @@ else(FREECAD_LIBPACK_USE)
 # -------------------------------- Qt --------------------------------
 
 # sets ${QT_LIBRARIES}
+    if(FREECAD_USE_QT5)
+        if(CMAKE_VERSION VERSION_LESS 2.8.11)
+            message(FATAL_ERROR "Qt 5 requires at least CMake version 2.8.11")
+        endif(CMAKE_VERSION VERSION_LESS 2.8.11)
 
-    SET(QT_MIN_VERSION 4.5.0)
-    set(QT_USE_QTNETWORK TRUE)
-    set(QT_USE_QTXML TRUE)
-    if(FREECAD_BUILD_GUI)
-        set(QT_USE_QTOPENGL TRUE)
-        set(QT_USE_QTSVG TRUE)
-        set(QT_USE_QTUITOOLS TRUE)
-        set(QT_USE_QTWEBKIT TRUE)
-    endif(FREECAD_BUILD_GUI)
-    find_package(Qt4 REQUIRED)
+        #set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-    include(${QT_USE_FILE})
+        set(Qt5_components Network Xml Http)
+        if(FREECAD_BUILD_GUI)
+            set(Qt5_components ${Qt5_components} Widgets OpenGL Svg UiTools WebKitWidgets PrintSupport Concurrent)
+        endif(FREECAD_BUILD_GUI) 
+        
+        find_package(Qt5 REQUIRED COMPONENTS ${Qt5_components})
 
-    IF(NOT QT4_FOUND)
-        MESSAGE("Library qt-4.3 or above is not available, install QT or FreeCAD Gui version will not be built")
-    ENDIF(NOT QT4_FOUND)
+        set(QT_INCLUDE_DIR ${Qt5Widgets_INCLUDE_DIRS})
+        foreach(component ${Qt5_components})
+            set(QT_LIBRARIES ${QT_LIBRARIES} Qt5::${component})
+        endforeach(component)
 
-    IF(NOT QT_QTWEBKIT_FOUND)
-        MESSAGE("Qt Webkit not found, will not build browser integration!")
-    ENDIF(NOT QT_QTWEBKIT_FOUND)
+        macro(fc_qt5_wrap_cpp outfiles )
+           # get include dirs
+           QT5_GET_MOC_FLAGS(moc_flags)
+           set(moc_files ${ARGN})
+           #QT4_EXTRACT_OPTIONS(moc_files moc_options moc_target ${ARGN})
+           # fixes bug 0000585: bug with boost 1.48
+           SET(moc_options ${moc_options} -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
+
+            foreach(it ${moc_files})
+                get_filename_component(it ${it} ABSOLUTE)
+                QT5_MAKE_OUTPUT_FILE(${it} moc_ cpp outfile)
+                QT5_CREATE_MOC_COMMAND(${it} ${outfile} "${moc_flags}" "${moc_options}" "${moc_target}")
+               set(${outfiles} ${${outfiles}} ${outfile})
+               add_file_dependencies(${it} ${outfile})
+            endforeach(it)
+        endmacro(fc_qt5_wrap_cpp)
+
+    else(FREECAD_USE_QT5)
+        SET(QT_MIN_VERSION 4.5.0)
+        set(QT_USE_QTNETWORK TRUE)
+        set(QT_USE_QTXML TRUE)
+        if(FREECAD_BUILD_GUI)
+            set(QT_USE_QTOPENGL TRUE)
+            set(QT_USE_QTSVG TRUE)
+            set(QT_USE_QTUITOOLS TRUE)
+            set(QT_USE_QTWEBKIT TRUE)
+        endif(FREECAD_BUILD_GUI)
+        find_package(Qt4 REQUIRED)
+
+        include(${QT_USE_FILE})
+
+        IF(NOT QT4_FOUND)
+            MESSAGE("Library qt-4.3 or above is not available, install QT or FreeCAD Gui version will not be built")
+        ENDIF(NOT QT4_FOUND)
+
+        IF(NOT QT_QTWEBKIT_FOUND)
+            MESSAGE("Qt Webkit not found, will not build browser integration!")
+        ENDIF(NOT QT_QTWEBKIT_FOUND)
 
 
-    # This is a special version of the built in macro qt4_wrap_cpp
-    # It is required since moc'ed files are now included instead of being added to projects directly
-    # It adds a reverse dependency to solve this
-    # This has the unfortunate side effect that some files are always rebuilt
-    # There is probably a cleaner solution than this
-    macro(fc_wrap_cpp outfiles )
-        # get include dirs
-        QT4_GET_MOC_FLAGS(moc_flags)
-        QT4_EXTRACT_OPTIONS(moc_files moc_options moc_target ${ARGN})
-        # fixes bug 0000585: bug with boost 1.48
-        SET(moc_options ${moc_options} -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
+        # This is a special version of the built in macro qt4_wrap_cpp
+        # It is required since moc'ed files are now included instead of being added to projects directly
+        # It adds a reverse dependency to solve this
+        # This has the unfortunate side effect that some files are always rebuilt
+        # There is probably a cleaner solution than this
+        macro(fc_wrap_cpp outfiles )
+           # get include dirs
+           QT4_GET_MOC_FLAGS(moc_flags)
+           QT4_EXTRACT_OPTIONS(moc_files moc_options moc_target ${ARGN})
+           # fixes bug 0000585: bug with boost 1.48
+           SET(moc_options ${moc_options} -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED)
 
-        foreach(it ${moc_files})
-            get_filename_component(it ${it} ABSOLUTE)
-            QT4_MAKE_OUTPUT_FILE(${it} moc_ cpp outfile)
-            QT4_CREATE_MOC_COMMAND(${it} ${outfile} "${moc_flags}" "${moc_options}" "${moc_target}")
-            set(${outfiles} ${${outfiles}} ${outfile})
-            add_file_dependencies(${it} ${outfile})
-        endforeach(it)
-    endmacro(fc_wrap_cpp)
+            foreach(it ${moc_files})
+                get_filename_component(it ${it} ABSOLUTE)
+                QT4_MAKE_OUTPUT_FILE(${it} moc_ cpp outfile)
+                QT4_CREATE_MOC_COMMAND(${it} ${outfile} "${moc_flags}" "${moc_options}" "${moc_target}")
+               set(${outfiles} ${${outfiles}} ${outfile})
+               add_file_dependencies(${it} ${outfile})
+            endforeach(it)
+        endmacro(fc_wrap_cpp)
+    endif(FREECAD_USE_QT5)
 
 #--------------------FreeType-----------------------
 

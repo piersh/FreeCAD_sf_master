@@ -17,6 +17,10 @@ include_directories(
     ${PYCXX_INCLUDE_DIR}
 )
 
+if(FREECAD_USE_QT5)
+    set(QT_QTCORE_LIBRARY Qt5::Core)
+endif(FREECAD_USE_QT5)
+
 if(MSVC)
     set(FreeCADBase_LIBS
         ${Boost_LIBRARIES}
@@ -147,7 +151,12 @@ set(FreeCADBase_MOC_HDRS
     Debugger.h
     FutureWatcherProgress.h
 )
-fc_wrap_cpp(FreeCADBase_MOC_SRCS ${FreeCADBase_MOC_HDRS})
+
+if(FREECAD_USE_QT5)
+    fc_qt5_wrap_cpp(FreeCADBase_MOC_SRCS ${FreeCADBase_MOC_HDRS})
+else(FREECAD_USE_QT5)
+    fc_wrap_cpp(FreeCADBase_MOC_SRCS ${FreeCADBase_MOC_HDRS})
+endif(FREECAD_USE_QT5)
 
 SET(FreeCADBase_UNITAPI_SRCS
     UnitsApi.cpp

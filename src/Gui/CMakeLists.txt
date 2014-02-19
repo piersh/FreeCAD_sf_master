@@ -210,8 +210,14 @@ set(Gui_MOC_HDRS
     TaskView/TaskEditControl.h
     TaskView/TaskView.h
 )
-#qt4_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
-fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
+
+if(FREECAD_USE_QT5)
+    fc_qt5_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
+else(FREECAD_USE_QT5)
+    #qt4_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
+    fc_wrap_cpp(Gui_MOC_SRCS ${Gui_MOC_HDRS})
+endif(FREECAD_USE_QT5)
+
 #SOURCE_GROUP("Moc" FILES ${Gui_MOC_SRCS})
 
 SET(Gui_UIC_SRCS
@@ -268,9 +274,15 @@ SET(Gui_RES_SRCS
     Language/translation.qrc
     iisTaskPanel/src/iisTaskPanel.qrc
 )
-QT4_ADD_RESOURCES(Gui_QRC_SRCS ${Gui_RES_SRCS})
 
-QT4_WRAP_UI(Gui_UIC_HDRS ${Gui_UIC_SRCS})
+if(FREECAD_USE_QT5)
+    qt5_add_resources(Gui_QRC_SRCS ${Gui_RES_SRCS})
+    qt5_wrap_ui(Gui_UIC_HDRS ${Gui_UIC_SRCS})
+else(FREECAD_USE_QT5)
+    QT4_ADD_RESOURCES(Gui_QRC_SRCS ${Gui_RES_SRCS})
+    QT4_WRAP_UI(Gui_UIC_HDRS ${Gui_UIC_SRCS})
+endif(FREECAD_USE_QT5)
+
 SOURCE_GROUP("Uic" FILES ${Gui_UIC_HDRS})
 
 # The command sources
@@ -606,9 +618,14 @@ set(iis_MOC_HDRS
     iisTaskPanel/src/iistaskgroup.h
     iisTaskPanel/src/iistaskheader.h
 )
-qt4_wrap_cpp(iis_MOC_SRCS ${iis_MOC_HDRS})
-SOURCE_GROUP("Widget\\iisTaskPanel\\Mocs" FILES ${iis_MOC_SRCS})
 
+if(FREECAD_USE_QT5)
+    fc_qt5_wrap_cpp(iis_MOC_SRCS ${iis_MOC_HDRS})
+else(FREECAD_USE_QT5)
+    qt4_wrap_cpp(iis_MOC_SRCS ${iis_MOC_HDRS})
+endif(FREECAD_USE_QT5)
+
+SOURCE_GROUP("Widget\\iisTaskPanel\\Mocs" FILES ${iis_MOC_SRCS})
 
 #SET(Resource_RCS
 #   Icons/resource.qrc

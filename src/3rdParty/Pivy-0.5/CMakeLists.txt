@@ -89,7 +89,7 @@ if(MSVC)
         optimized ${PYTHON_LIBRARY})
 else(MSVC)
     set(SoQtPy_LIBS
-        ${SOQT_LIBRARIES}
+        ${SOQT_LIBRARY}
         ${COIN3D_LIBRARY}
         ${PYTHON_LIBRARY})
 endif(MSVC)
