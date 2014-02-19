@@ -5,6 +5,10 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QLinearGradient>
+#include <QColor>
+#include <QPixmap>
+
 #include "iistaskpanelscheme.h"
 
 iisTaskPanelScheme* iisTaskPanelScheme::myDefaultScheme = 0;

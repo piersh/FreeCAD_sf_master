@@ -5,6 +5,11 @@
  *                                                                         *
  ***************************************************************************/
 
+//#include <QPaintEvent>
+#include <QVBoxLayout>
+#include <QPainter>
+#include <QTimer>
+
 #include "iistaskbox.h"
 #include "iistaskheader.h"
 #include "iistaskgroup.h"

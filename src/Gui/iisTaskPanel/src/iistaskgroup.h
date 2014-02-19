@@ -8,7 +8,8 @@
 #ifndef IISTASKGROUP_H
 #define IISTASKGROUP_H
 
-#include <QtGui>
+#include <QFrame>
+#include <QBoxLayout>
 
 #include "iistaskpanel_global.h"
 

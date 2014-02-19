@@ -8,9 +8,12 @@
 #ifndef IISTASKHEADER_H
 #define IISTASKHEADER_H
 
-#include <QtGui>
+#include <QFrame>
 
 #include "iistaskpanel_global.h"
+
+class QIcon;
+class QLabel;
 
 class iisTaskPanelScheme;
 struct iisIconLabelScheme;

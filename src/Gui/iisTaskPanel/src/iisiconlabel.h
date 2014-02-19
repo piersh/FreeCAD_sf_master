@@ -8,7 +8,13 @@
 #ifndef IISICONLABEL_H
 #define IISICONLABEL_H
 
-#include <QtGui>
+#include <QWidget>
+#include <QString>
+#include <QIcon>
+#include <QColor>
+#include <QPen>
+#include <QFont>
+#include <QSize>
 
 #include "iistaskpanel_global.h"
 

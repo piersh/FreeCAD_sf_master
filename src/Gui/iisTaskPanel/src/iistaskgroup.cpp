@@ -5,6 +5,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QVBoxLayout>
+#include <QPainter>
+
 #include "iistaskgroup.h"
 #include "iistaskpanelscheme.h"
 #include "iisiconlabel.h"

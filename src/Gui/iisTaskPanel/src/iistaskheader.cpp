@@ -5,6 +5,14 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QIcon>
+#include <QLabel>
+#include <QPainter>
+#include <QHBoxLayout>
+#include <QTimer>
+#include <QEvent>
+#include <QMouseEvent>
+
 #include "iistaskheader.h"
 #include "iistaskpanelscheme.h"
 #include "iisiconlabel.h"

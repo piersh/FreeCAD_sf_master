@@ -17,7 +17,7 @@
 #ifndef IISTASKPANEL_H
 #define IISTASKPANEL_H
 
-#include <QtGui>
+#include <QWidget>
 #include <QtCore>
 #include <QSpacerItem>
 

@@ -8,9 +8,12 @@
 #ifndef IISTASKBOX_H
 #define IISTASKBOX_H
 
-#include <QtGui>
+#include <QFrame>
+#include <QPixmap>
 
 #include "iistaskpanel_global.h"
+
+class QBoxLayout;
 
 class iisTaskHeader;
 class iisTaskGroup;

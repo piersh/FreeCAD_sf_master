@@ -24,7 +24,11 @@
 #include "iisfreecadscheme.h"
 #include <QApplication>
 #include <QStyle>
-
+#include <QLinearGradient>
+#include <QPalette>
+#include <QPainter>
+#include <QImage>
+#include <QTransform>
 
 iisFreeCADTaskPanelScheme* iisFreeCADTaskPanelScheme::myDefaultXPScheme = 0;
 

@@ -5,6 +5,15 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <QApplication>
+#include <QPainter>
+#include <QPixmap>
+#include <QRect>
+#include <QFontMetrics>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPaintEvent>
+
 #include "iisiconlabel.h"
 #include "iistaskpanelscheme.h"
 
