@@ -112,11 +112,21 @@ class LibPack:
             module = importer.find_module(name).load_module(full_name)
             
             valid = True
-            attributes = ["name", "version", "source", "depends_on", "install"]
+            attributes = ["name", "version", "source", "depends_on",
+                          "build", "install"]
+            
+            if not hasattr(module, "meta"):
+                setattr(module, "meta", False)
+                
+            if module.meta:
+                #required attrs for meta formulas
+                attributes = ["name", "depends_on"]
+
             for attr in attributes:
                 if not hasattr(module, attr):
                     valid = False
-                    print(module.__name__ + " has no attribute " + attr, file=sys.stderr)
+                    print(module.__name__ + " has no attribute " + attr,
+                          file=sys.stderr)
                     bad = module.__name__
 
             if not valid:
@@ -221,34 +231,43 @@ class LibPack:
     def install(self, name):
         if not self.exists:
             raise LibPackError("Config [LibPack] 'path' not set (have you run 'new'?)")
+
         if self.is_installed(name):
-            raise LibPackError(name + " is already installed")
-        
-        utils.setup_env(self.toolchain, self.arch)
+            print(name + " is already installed")
+            return
 
         if self._build_formulas == {}:
             import BuildFormulas
             self._load_build_formulas(BuildFormulas)
-        try:
-            formula = self._build_formulas[name]  
-        except KeyError:
-            raise ValueError("No build formula found for " + name)
-        
-        src_dir = utils.get_source(formula.source, self.config.get("Paths","workspace"))
-        old_cwd = os.getcwd()
-        os.chdir(src_dir)
-
-        try:
-            print("Building {0}...".format(name))
-            formula.build(self)
-            print("Installing {0}...".format(name))
-            formula.install(self)
-            print("Successfully installed " + name)
-        except CalledProcessError as e:
-            print(e)
-            utils.run_cmd("cmd")
             
-        os.chdir(old_cwd)
+        try:
+            formula = self._build_formulas[name]
+        except KeyError:
+            raise LibPackError("No build formula found for " + name)
+
+        #install dependencies
+        for n in formula.depends_on:
+            self.install(n)
+
+        if not formula.meta:
+            src_dir = utils.get_source(formula.source,
+                                       self.config.get("Paths", "workspace"))
+            old_cwd = os.getcwd()
+            os.chdir(src_dir)
+            
+            try:
+                print("Dependencies: {0}\n".format(formula.depends_on))    
+                print("Building {0}...\n".format(name))
+                formula.build(self)
+                print("Installing {0}...\n".format(name))
+                formula.install(self)
+                print("Successfully installed {0}\n".format(name))
+            except CalledProcessError as e:
+                print(e)
+                #start shell for debugging
+                utils.run_cmd("cmd")
+            
+            os.chdir(old_cwd)
         
 
     def uninstall(self, name):
