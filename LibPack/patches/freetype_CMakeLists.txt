@@ -1,0 +1,79 @@
+####### FREEIMAGE
+#Original file from oce-win-bundle: https://github.com/QbProg/oce-win-bundle
+#Modified by Peter Lama
+
+PROJECT(freetype)
+cmake_minimum_required(VERSION 2.6)
+
+SET(CMAKE_DEBUG_POSTFIX "D")
+
+ADD_DEFINITIONS(-DFT2_BUILD_LIBRARY)
+ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
+
+INCLUDE_DIRECTORIES(include)
+
+SET ( FT_SOURCE_FILES
+    src/autofit/autofit.c
+    src/bdf/bdf.c
+    src/cff/cff.c
+    src/base/ftbase.c
+    src/base/ftbitmap.c
+    src/cache/ftcache.c
+    src/base/ftdebug.c
+    src/base/ftfstype.c
+    src/base/ftgasp.c
+    src/base/ftglyph.c
+    src/gzip/ftgzip.c
+    src/base/ftinit.c
+    src/lzw/ftlzw.c
+    src/base/ftstroke.c
+    src/base/ftsystem.c
+    src/smooth/smooth.c
+    )
+    
+#IF(MSVC)
+#     LIST (APPEND FT_SOURCE_FILES freetype.def)
+#ENDIF()
+
+IF(WIN32)
+    LIST(APPEND FT_SOURCE_FILES builds/windows/ftdebug.c)
+ENDIF(WIN32)
+    
+SET ( FT_MODULES 
+    src/base/ftbbox.c
+    src/base/ftgxval.c
+    src/base/ftlcdfil.c
+    src/base/ftmm.c
+    src/base/ftotval.c
+    src/base/ftpatent.c
+    src/base/ftpfr.c
+    src/base/ftsynth.c
+    src/base/fttype1.c
+    src/base/ftwinfnt.c
+    src/base/ftxf86.c
+    src/pcf/pcf.c
+    src/pfr/pfr.c
+    src/psaux/psaux.c
+    src/pshinter/pshinter.c
+    src/psnames/psmodule.c
+    src/raster/raster.c
+    src/sfnt/sfnt.c
+    src/truetype/truetype.c
+    src/type1/type1.c
+    src/cid/type1cid.c
+    src/type42/type42.c
+    src/winfonts/winfnt.c
+    )
+
+ADD_LIBRARY(freetype SHARED ${FT_SOURCE_FILES} ${FT_MODULES} )  
+
+INSTALL(DIRECTORY include/
+    DESTINATION include/freetype2
+    PATTERN "internal" EXCLUDE
+    )
+
+INSTALL(TARGETS freetype
+    ARCHIVE DESTINATION  lib CONFIGURATIONS Debug Release MinSizeRel RelWithDebInfo
+    LIBRARY DESTINATION  lib CONFIGURATIONS Debug Release MinSizeRel RelWithDebInfo
+    RUNTIME DESTINATION  bin CONFIGURATIONS Debug Release MinSizeRel RelWithDebInfo
+    )
