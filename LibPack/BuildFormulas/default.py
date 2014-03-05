@@ -1,3 +1,3 @@
 name = "default"
-depends_on = ["freetype", "oce"]
+depends_on = ["freetype", "oce", "qt"]
 meta = True
