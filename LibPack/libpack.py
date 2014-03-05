@@ -245,7 +245,10 @@ class LibPack:
         except KeyError:
             raise LibPackError("No build formula found for " + name)
 
+        utils.setup_env(self.toolchain, self.arch)
+        
         #install dependencies
+        print("Dependencies: {0}\n".format(formula.depends_on)) 
         for n in formula.depends_on:
             self.install(n)
 
@@ -256,7 +259,6 @@ class LibPack:
             os.chdir(src_dir)
             
             try:
-                print("Dependencies: {0}\n".format(formula.depends_on))    
                 print("Building {0}...\n".format(name))
                 formula.build(self)
                 print("Installing {0}...\n".format(name))
