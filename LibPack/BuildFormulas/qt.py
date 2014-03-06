@@ -26,24 +26,26 @@ def build(libpack):
 def install(libpack):
     if platform == "win32":  
         files = utils.copytree("include", libpack.path, "include", root=False,
-                               ignore=utils.ignore_names(["phonon",
-                                                          "phonon_compat",
-                                                          "Qt3Support",
-                                                          "QtOpenVG",
-                                                          "QtMultimedia",
-                                                          "private", "*.pri"], []))
+                               ignore=utils.ignore_names("phonon",
+                                                         "phonon_compat",
+                                                         "Qt3Support",
+                                                         "QtOpenVG",
+                                                         "QtMultimedia",
+                                                         "private", "*.pri"))
     
         files.extend(utils.copytree("lib", libpack.path, "lib", root=False,
-                                    ignore=utils.ignore_names(["fonts"], ["*.lib"])))
+                                    ignore=utils.ignore_names_inverse(["*.lib"])))
         files.extend(utils.copytree("bin", libpack.path, "bin", root=False,
-                                    ignore=utils.ignore_names([],["*.dll",
-                                                                  "*.exe"])))
+                                    ignore=utils.ignore_names_inverse(["*.dll",
+                                                                       "*.exe"])))
         files.extend(utils.copytree("plugins", libpack.path, "bin\\qtplugins",
-                                    ignore=utils.ignore_names(["bearer",
-                                                               "designer",
-                                                               "graphicssystems",
-                                                               "qmltooling"],
-                                                              ["*.dll"])))
+                                    ignore=utils.ignore_names_inverse(
+                                        ["*.dll"],
+                                        ["bearer",
+                                         "designer",
+                                         "graphicssystems",
+                                         "qmltooling"]
+                                    )))
 
         libpack.manifest_add(name, version, files)
 

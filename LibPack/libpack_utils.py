@@ -125,8 +125,18 @@ def get_source(source, dest_dir):
         tmp_dir = os.path.join(dest_dir, "tmp_" + os.path.splitext(filename)[0])
         if not os.path.exists(tmp_dir) or not os.listdir(tmp_dir):
             run_cmd("7z", ["x", "-y", "-o" + tmp_dir, dest_file], silent=True)
+
+        #it might be a tar
+        contents = os.listdir(tmp_dir)
+        if contents[0].endswith(".tar"):
+            dest_file = os.path.join(dest_dir, contents[0])
+            run_cmd("7z", ["x", "-y", "-o" + tmp_dir, dest_file], silent=True)
+
+        src_dir = ""    
+        for n in os.listdir(tmp_dir):
+            if not n.endswith(".tar"):
+                src_dir = n
         
-        src_dir = os.listdir(tmp_dir)[0]
         dest_src_dir = os.path.join(dest_dir, src_dir)
         
         #if os.path.exists(dest_src_dir):
@@ -143,43 +153,36 @@ def get_source(source, dest_dir):
        run_cmd("git", ["clone", source["url"]])
        
 def filter_multi(names, patterns):
-    include_names = []
+    include_names = set()
     for p in patterns:
         matched = fnmatch.filter(names, p)
         for n in matched:
-            if n not in include_names:
-                include_names.append(n)
+            include_names.add(n)
     return include_names
 
-def ignore_names(exclude, include):
-    def _ignore(path, names):
-	include_names = filter_multi(names, include)
-        exclude_names = filter_multi(names, exclude)
+ignore_names = shutil.ignore_patterns
+
+def ignore_names_inverse(patterns, dir_filter=["*"]):
+    """
+    Returns a function that can be used as copytree's ignore argument.
+    All filenames that don't match a pattern in patterns will be ignored.
+    Only include directories that don't match a pattern in dir_filter. 
+    """
+    def _ignore_function(path, names):
+	include_names = filter_multi(names, patterns)
+        exclude_dirs = filter_multi(names, dir_filter)
         ignore_names = set()
         for n in names:
-            if n in exclude_names:
-                ignore_names.add(n)
+            if os.path.isdir(os.path.join(path, n)):
+                if n in exclude_dirs:
+                    ignore_names.add(n)
             else:    
-                if (include_names and n not in include_names
-                    and not os.path.isdir(os.path.join(path, n))):
+                if patterns and n not in include_names:
                     ignore_names.add(n)
             
         return ignore_names
 
-    return _ignore
-
-def include_only_patterns(*patterns):
-    """
-    Inverse of shutil.ignore_patterns
-    """
-    def _ignore_names(path, names):
-        include_names = filter_multi(names, *patterns)
-        ignore_names = []
-        for name in names:
-            if name not in include_names:
-                ignore_names.append(name)
-        return ignore_names        
-    return _ignore_names
+    return _ignore_function
 
 def copytree(src, dest_root, dest, symlinks=False, root=True, ignore=None):
     """"
