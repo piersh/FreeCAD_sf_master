@@ -184,8 +184,42 @@ def ignore_names_inverse(patterns, dir_filter=["*"]):
 
     return _ignore_function
 
+def copyfiles(src_patterns, dest_root, dest, ignore_patterns=None):
+    """
+    """
+    copied = []
+    abs_dest = os.path.join(dest_root, dest)
+
+    files = set()
+    rel_paths = set()
+    for p in src_patterns:
+        if os.path.isabs(p):
+            files.add(p)
+        else:
+            rel_path = os.path.dirname(p)
+            if not rel_path: rel_path = ".\\"
+            rel_paths.add(rel_path)
+            
+    for p in rel_paths:
+        contents = os.listdir(p)
+        names = []
+        ignore_files = set()
+        for n in contents:
+            names.append(os.path.join(p, n))
+        if ignore_patterns != None:
+            ignore_files = filter_multi(names, ignore_patterns)
+        files = files.union(filter_multi(names, src_patterns) - ignore_files)
+   
+    for f in files:
+        if not os.path.exists(abs_dest):
+            os.mkdir(abs_dest)
+        shutil.copy(f, abs_dest)
+        copied.append(os.path.join(dest, os.path.basename(f)))
+
+    return copied
+
 def copytree(src, dest_root, dest, symlinks=False, root=True, ignore=None):
-    """"
+    """
     Copy an entire directory tree rooted at src.
     If root is False, only the contents of src is copied.
     """
@@ -203,6 +237,8 @@ def copytree(src, dest_root, dest, symlinks=False, root=True, ignore=None):
                 subsrc = os.path.join(src, name)
 
                 if os.path.isfile(subsrc):
+                    if not os.path.exists(abs_dest):
+                        os.mkdir(abs_dest)
                     shutil.copy(subsrc, abs_dest)
                     copied.append(os.path.join(dest, name))
                 elif os.path.isdir(subsrc):
