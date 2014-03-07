@@ -33,9 +33,12 @@ def build(libpack):
         utils.run_cmd("cmake", ["-D", "OCE_INSTALL_PREFIX=" + tmp_install,
                                 "-D", "OCE_INSTALL_BIN_DIR=bin",
                                 "-D", "OCE_INSTALL_LIB_DIR=lib",
-                                "-D", "OCE_INSTALL_PACKAGE_LIB_DIR=pkg",
+                                #"-D", "OCE_INSTALL_PACKAGE_LIB_DIR=lib",
+                                #"-D", "OCE_INSTALL_PDB_FILES=OFF",
+                                #"-D", "OCE_MULTITHREADED_BUILD=OFF",
                                 "-D", ft_include,
                                 "-D", "OCE_USE_MSVC_EXPRESS=ON",
+                                "-D", "OCE_DRAW=ON",
                                 "-D", "OCE_WITH_FREEIMAGE=ON",
                                 "-D", "CMAKE_USE_RELATIVE_PATHS=ON",
                                 "-G", generator, ".."])
@@ -66,5 +69,5 @@ def install(libpack):
     libpack.manifest_add(name, version, files)
 
     os.chdir("..")
-    shutil.rmtree(tmp_install)
+    utils.shutil.rmtree(tmp_install)
 
