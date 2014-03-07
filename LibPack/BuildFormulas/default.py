@@ -1,3 +1,4 @@
 name = "default"
-depends_on = ["boost", "coin", "eigen", "freetype", "oce", "qt", "xerces-c"]
+depends_on = ["boost", "coin", "eigen", "freetype", "netgen", "oce", "python",
+              "qt", "soqt", "xerces-c"]
 meta = True

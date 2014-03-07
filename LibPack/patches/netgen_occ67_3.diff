@@ -1,0 +1,47 @@
+--- libsrc\occ\Partition_Loop2d.cxx	Sun Aug 23 19:12:24 2009
++++ libsrc\occ\Partition_Loop2d_new2.cxx	Thu May 30 12:18:11 2013
+@@ -22,7 +22,7 @@
+ #include <BRepAdaptor_Surface.hxx>
+ #include <BRepAlgo_AsDes.hxx>
+ #include <BRepAlgo_FaceRestrictor.hxx>
+-#include <BRepOffset_DataMapOfShapeReal.hxx>
++// #include <BRepOffset_DataMapOfShapeReal.hxx>   // V6.3
+ #include <BRepTopAdaptor_FClass2d.hxx>
+ #include <BRep_Builder.hxx>
+ #include <BRep_Tool.hxx>
+@@ -37,6 +37,7 @@
+ #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
+ #include <TopTools_DataMapIteratorOfDataMapOfShapeShape.hxx>
+ #include <TopTools_DataMapOfShapeInteger.hxx>
++#include <TopTools_DataMapOfShapeReal.hxx>    // V6.5
+ #include <TopTools_DataMapOfShapeShape.hxx>
+ #include <TopTools_IndexedMapOfShape.hxx>
+ #include <TopTools_ListIteratorOfListOfShape.hxx>
+@@ -209,7 +210,7 @@
+     Cc->D1(uc, PC, CTg1);
+     if (!isForward) CTg1.Reverse();
+ 
+-    Standard_Real anglemin = 3 * PI, tolAng = 1.e-8;
++    Standard_Real anglemin = 3 * M_PI, tolAng = 1.e-8;
+ 
+     // select an edge whose first derivative is most left of CTg1
+     // ie an angle between Tg1 and CTg1 is least
+@@ -233,7 +234,7 @@
+       // -PI < angle < PI
+       Standard_Real angle = Tg1.Angle(CTg1);
+ 
+-      if (PI - Abs(angle) <= tolAng)
++      if (M_PI - Abs(angle) <= tolAng)
+       {
+         // an angle is too close to PI; assure that an angle sign really
+         // reflects an edge position: +PI - an edge is worst,
+@@ -519,7 +522,8 @@
+     DC.Initialize( DegEdge, F );
+ 
+   // avoid intersecting twice the same edge
+-  BRepOffset_DataMapOfShapeReal EUMap ( EdgesList.Extent() );
++  // BRepOffset_DataMapOfShapeReal EUMap ( EdgesList.Extent() );  // V6.3
++  TopTools_DataMapOfShapeReal EUMap ( EdgesList.Extent() );   // V6.5
+ 
+   Standard_Real U, f, l;
+   BRep_Tool::Range (DegEdge, f, l);

@@ -1,0 +1,11 @@
+--- libsrc\occ\Partition_Inter3d.cxx	Thu Mar  6 23:36:35 2014
++++ libsrc\occ\Partition_Inter3d_new.cxx	Thu Mar  6 23:40:16 2014
+@@ -243,7 +243,7 @@
+       Standard_Integer i, nbExt = anExtPS.NbExt();
+       Extrema_POnSurf aPOnSurf;
+       for (i = 1; i <= nbExt; ++i )
+-        if (anExtPS.Value( i ) <= TolE) {
++        if (anExtPS.SquareDistance( i ) <= TolE) {
+           aPOnSurf = anExtPS.Point( i );
+           break;
+         }

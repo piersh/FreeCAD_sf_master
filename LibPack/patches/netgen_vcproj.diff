@@ -1,0 +1,50 @@
+--- windows\nglib.vcproj	Wed Apr  7 04:35:49 2010
++++ windows\nglib_new.vcproj	Fri Mar  7 11:58:03 2014
+@@ -66,6 +66,7 @@
+ 			<Tool
+ 				Name="VCLinkerTool"
+ 				AdditionalDependencies="pthreadVC2.lib"
++				OutputFile="$(OutDir)\$(ProjectName)d.dll"
+ 				LinkIncremental="2"
+ 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\..\ext_libs\pthread-w32\lib&quot;"
+ 				ManifestFile="$(OutDir)\$(TargetFileName).intermediate.manifest"
+@@ -96,6 +97,7 @@
+ 			<Tool
+ 				Name="VCPostBuildEventTool"
+ 				CommandLine="&quot;$(ProjectDir)\postBuild_nglib.bat&quot; &quot;$(ProjectName)&quot; &quot;$(TargetFileName)&quot; &quot;$(ConfigurationName)&quot; &quot;$(PlatformName)&quot; &quot;$(ProjectDir)&quot;"
++				ExcludedFromBuild="true"
+ 			/>
+ 		</Configuration>
+ 		<Configuration
+@@ -146,6 +148,7 @@
+ 			<Tool
+ 				Name="VCLinkerTool"
+ 				AdditionalDependencies="pthreadVC2_64.lib"
++				OutputFile="$(OutDir)\$(ProjectName)d.dll"
+ 				LinkIncremental="2"
+ 				AdditionalLibraryDirectories="&quot;$(SolutionDir)..\..\ext_libs\pthread-w64\lib&quot;"
+ 				ManifestFile="$(OutDir)\$(TargetFileName).intermediate.manifest"
+@@ -176,6 +179,7 @@
+ 			<Tool
+ 				Name="VCPostBuildEventTool"
+ 				CommandLine="&quot;$(ProjectDir)\postBuild_nglib.bat&quot; &quot;$(ProjectName)&quot; &quot;$(TargetFileName)&quot; &quot;$(ConfigurationName)&quot; &quot;$(PlatformName)&quot; &quot;$(ProjectDir)&quot;"
++				ExcludedFromBuild="true"
+ 			/>
+ 		</Configuration>
+ 		<Configuration
+@@ -427,6 +431,7 @@
+ 			<Tool
+ 				Name="VCPostBuildEventTool"
+ 				CommandLine="&quot;$(ProjectDir)\postBuild_nglib.bat&quot; &quot;$(ProjectName)&quot; &quot;$(TargetFileName)&quot; &quot;$(ConfigurationName)&quot; &quot;$(PlatformName)&quot; &quot;$(ProjectDir)&quot;"
++				ExcludedFromBuild="true"
+ 			/>
+ 		</Configuration>
+ 		<Configuration
+@@ -512,6 +517,7 @@
+ 			<Tool
+ 				Name="VCPostBuildEventTool"
+ 				CommandLine="&quot;$(ProjectDir)\postBuild_nglib.bat&quot; &quot;$(ProjectName)&quot; &quot;$(TargetFileName)&quot; &quot;$(ConfigurationName)&quot; &quot;$(PlatformName)&quot; &quot;$(ProjectDir)&quot;"
++				ExcludedFromBuild="true"
+ 			/>
+ 		</Configuration>
+ 	</Configurations>
