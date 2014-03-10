@@ -26,7 +26,8 @@ def build(libpack):
             #          "/netgen-mesher/Additional%20Files/MSVC2008_Libs"\
             #          "/TclTkTixTogl-w" + bit + ".zip"
             utils.get_source({"type":"archive", "url":pthread_url},
-                              "..\\ext_libs")
+                              "..\\ext_libs",
+                             os.path.basename(pthread_url).split(".")[0])
 
             utils.apply_patch(os.path.join(os.path.dirname(__file__),
                               "..\\patches\\netgen_vcproj.diff"))

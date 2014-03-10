@@ -113,7 +113,7 @@ def _download_progress(blocks, block_size, file_size):
     percent = min(blocks*block_size*100.0 / file_size, 100)
     print("{0:3.1f}%".format(percent), end='\r')
     
-def get_source(source, dest_dir):
+def get_source(source, dest_dir, name):
     if source["type"] == "archive":
         filename = os.path.basename(source["url"])
         dest_file = os.path.join(dest_dir, filename)
@@ -122,14 +122,14 @@ def get_source(source, dest_dir):
             urllib.urlretrieve(source["url"], dest_file, _download_progress)
         #get directory name by extracting to empty directory
         print("Extracting...")
-        tmp_dir = os.path.join(dest_dir, "tmp_" + os.path.splitext(filename)[0])
+        tmp_dir = os.path.join(dest_dir, "tmp_" + name)
         if not os.path.exists(tmp_dir) or not os.listdir(tmp_dir):
             run_cmd("7z", ["x", "-y", "-o" + tmp_dir, dest_file], silent=True)
 
         #it might be a tar
         contents = os.listdir(tmp_dir)
         if contents[0].endswith(".tar"):
-            dest_file = os.path.join(dest_dir, contents[0])
+            dest_file = os.path.join(tmp_dir, contents[0])
             run_cmd("7z", ["x", "-y", "-o" + tmp_dir, dest_file], silent=True)
 
         src_dir = ""    
@@ -137,7 +137,7 @@ def get_source(source, dest_dir):
             if not n.endswith(".tar"):
                 src_dir = n
         
-        dest_src_dir = os.path.join(dest_dir, src_dir)
+        dest_src_dir = os.path.join(dest_dir, name)
         
         #if os.path.exists(dest_src_dir):
             #shutil.rmtree(dest_src_dir)
@@ -193,7 +193,7 @@ def copyfiles(src_patterns, dest_root, dest, ignore_patterns=None):
     files = set()
     rel_paths = set()
     for p in src_patterns:
-        if os.path.isabs(p):
+        if os.path.isabs(p) and os.path.exists(p):
             files.add(p)
         else:
             rel_path = os.path.dirname(p)
@@ -242,10 +242,19 @@ def copytree(src, dest_root, dest, symlinks=False, root=True, ignore=None):
                     shutil.copy(subsrc, abs_dest)
                     copied.append(os.path.join(dest, name))
                 elif os.path.isdir(subsrc):
-                    shutil.copytree(subsrc, os.path.join(abs_dest, name),
-                                    symlinks, ignore)
+                    #delete if already exists
+                    dest_src = os.path.join(abs_dest, name)
+                    print(dest_src)
+                    if os.path.isdir(dest_src):
+                        shutil.rmtree(dest_src)
+                    
+                    shutil.copytree(subsrc, dest_src, symlinks, ignore)
                     copied.append(os.path.join(dest, name))
     else:
+        print(abs_dest)  
+        if os.path.isdir(abs_dest):
+            shutil.rmtree(abs_dest)
+            
         shutil.copytree(src, abs_dest, symlinks, ignore)
         copied.append(dest)
 
@@ -259,6 +268,7 @@ def move(src, dest_root, dest, root=True, ignore=None):
     """
     moved = []
     abs_dest = os.path.join(dest_root, dest)
+
     if not root and os.path.isdir(src):
         contents = os.listdir(src)
         
@@ -269,9 +279,23 @@ def move(src, dest_root, dest, root=True, ignore=None):
         for name in contents:
             if name not in ignore_names:
                 subsrc = os.path.join(src, name)
+                #delete if already exists
+                dest_src = os.path.join(abs_dest, name)
+                if os.path.isdir(dest_src):
+                    shutil.rmtree(dest_src)
+                if os.path.isfile(dest_src):
+                    os.remove(dest_src)
+                    
                 shutil.move(subsrc, abs_dest)
                 moved.append(os.path.join(dest, os.path.basename(subsrc)))
     else:
+        #delete if already exists
+        dest_src = os.path.join(abs_dest, os.path.basename(src))
+        if os.path.isdir(dest_src):
+            shutil.rmtree(dest_src)
+        if os.path.isfile(dest_src):
+            os.remove(dest_src)
+            
         shutil.move(src, abs_dest)
         moved.append(os.path.join(dest, os.path.basename(src)))
 

@@ -253,8 +253,9 @@ class LibPack:
             self.install(n)
 
         if not formula.meta:
-            src_dir = utils.get_source(formula.source,
-                                       self.config.get("Paths", "workspace"))
+            src_dir = utils.get_source(formula.source, 
+                                       self.config.get("Paths", "workspace"),
+                                       formula.name + "-" + formula.version)
             old_cwd = os.getcwd()
             os.chdir(src_dir)
             
@@ -282,7 +283,7 @@ class LibPack:
             if os.path.isfile(path):
                 os.remove(path)
             elif os.path.isdir(path):
-                shutil.rmtree(path)
+                shutil.rmtree(path, ignore_errors=True)
         print("Successfully uninstalled " + name)
     
 
