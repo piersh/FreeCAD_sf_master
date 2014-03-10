@@ -61,6 +61,10 @@ def install(libpack):
     files.extend(utils.copyfiles(["windows\\nglib\\Debug\\*.dll",
                                   "windows\\nglib\\Release(OCC)\\*.dll"],
                                  libpack.path, "bin"))
+    files.extend(utils.copytree("libsrc", libpack.path, "include\\netgen", 
+	                        ignore=utils.ignore_names_inverse(["*.hpp", 
+							           "*.h"],
+                                                                  [])))
 
     libpack.manifest_add(name, version, files)
 

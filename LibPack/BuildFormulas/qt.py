@@ -10,16 +10,13 @@ source = {"type":"archive", "url":
 depends_on = []
     
 def build(libpack):
-    tmp_install = os.path.join(libpack.config.get("Paths", "workspace"),
-                               "tmp_install")
-    
     if platform == "win32":
         print("\nBuilding release and debug...\n")
         utils.run_shell("configure -opensource -confirm-license "
                         "-debug-and-release -mp -no-qt3support "
                         "-no-phonon -no-multimedia -no-declarative-debug "
                         "-nomake tests -nomake examples -nomake demos "
-                        "-nomake docs -no-vcproj")
+                        "-nomake docs -no-vcproj", env=os.environ)
         utils.run_cmd("nmake")
 
     
@@ -31,7 +28,17 @@ def install(libpack):
                                                          "Qt3Support",
                                                          "QtOpenVG",
                                                          "QtMultimedia",
-                                                         "private", "*.pri"))
+                                                         "*.pri"))
+        files.extend(utils.copytree("src", libpack.path, "src",
+                               ignore=utils.ignore_names_inverse(["*.h"],
+                                                         ["imports",
+                                                         "multimedia",
+                                                         "openvg",
+                                                         "phonon"
+                                                         "qt3support"
+                                                         "plugins"])))
+        files.extend(utils.copytree("tools", libpack.path, "tools",
+                               ignore=utils.ignore_names_inverse(["*.h"],[])))
     
         files.extend(utils.copytree("lib", libpack.path, "lib", root=False,
                                     ignore=utils.ignore_names_inverse(["*.lib"])))
@@ -46,6 +53,9 @@ def install(libpack):
                                          "graphicssystems",
                                          "qmltooling"]
                                     )))
+        with open(libpack.path + "\\bin\\qt.conf", "wb") as f:
+            f.write("[Paths]\nPrefix = ..\nPlugins = qtplugins\n")
+        files.append("bin\\qt.conf")
 
         libpack.manifest_add(name, version, files)
 

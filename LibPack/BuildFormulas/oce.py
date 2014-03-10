@@ -2,7 +2,7 @@ import libpack_utils as utils
 import os
 
 name = "oce"
-version = "3.15.4"
+version = "0.15"
 source = {"type":"archive", "url":
           "https://github.com/tpaviot/oce/archive/OCE-0.15.zip"}
 depends_on = ["freetype", "freeimage"]
@@ -33,7 +33,7 @@ def build(libpack):
         utils.run_cmd("cmake", ["-D", "OCE_INSTALL_PREFIX=" + tmp_install,
                                 "-D", "OCE_INSTALL_BIN_DIR=bin",
                                 "-D", "OCE_INSTALL_LIB_DIR=lib",
-                                #"-D", "OCE_INSTALL_PACKAGE_LIB_DIR=lib",
+                                "-D", "OCE_INSTALL_CMAKE_DATA_DIR=lib/cmake",
                                 #"-D", "OCE_INSTALL_PDB_FILES=OFF",
                                 #"-D", "OCE_MULTITHREADED_BUILD=OFF",
                                 "-D", ft_include,
@@ -60,11 +60,15 @@ def install(libpack):
             
     files = utils.move(os.path.join(tmp_install, "include"),
                        libpack.path, "include", root=False)
-    
-    files.extend(utils.move(os.path.join(tmp_install, "lib"),
-                            libpack.path, "lib", root=False))
+
+    #copy cmake directory separately because it might already exist
+    files.extend(utils.move(os.path.join(tmp_install, "lib"), libpack.path,
+                            "lib", ignore=utils.ignore_names("cmake"),
+                            root=False))
     files.extend(utils.move(os.path.join(tmp_install, "bin"),
                             libpack.path, "bin", root=False))
+    files.extend(utils.move(os.path.join(tmp_install, "lib", "cmake"),
+                            libpack.path, "lib\\cmake", root=False))
 
     libpack.manifest_add(name, version, files)
 

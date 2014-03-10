@@ -25,7 +25,7 @@ def build(libpack):
     
 def install(libpack): 
     files = utils.copytree("src\\xercesc", libpack.path, "include\\xercesc",
-                           ignore=utils.ignore_names_inverse(["*.h", "*.hpp"],
+                           ignore=utils.ignore_names_inverse(["*.h", "*.hpp", "*.c"],
                                                              dir_filter=[]))
 
     build_dir = ""

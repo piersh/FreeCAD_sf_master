@@ -11,11 +11,15 @@ depends_on = []
 def build(libpack):
     
     if libpack.toolchain.startswith("vc"):
+        utils.apply_patch(os.path.join(os.path.dirname(__file__),
+                          "..\\patches\\python_pyconfig.diff"))
+        
         if libpack.toolchain == "vc9":
             try:
                 print("\nBuilding release...\n")
                 utils.run_cmd("vcbuild", ["PCbuild\\pcbuild.sln",
                                           "Release|Win32"])
+                print("\nBuilding debug...\n")
                 utils.run_cmd("vcbuild", ["PCbuild\\pcbuild.sln",
                                           "Debug|Win32"])
             except CalledProcessError as e:
@@ -27,6 +31,7 @@ def build(libpack):
     
 def install(libpack): 
     files = utils.copytree("Include", libpack.path, "include\\python2.7")
+    files.extend(utils.copyfiles(["PC\\pyconfig.h"], libpack.path, "include\\python2.7"))
     
     utils.run_cmd("7z", ["a", "-r", libpack.path + "\\bin\\python27.zip", ".\\Lib\\*"],
                   silent=True)
