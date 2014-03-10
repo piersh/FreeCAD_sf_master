@@ -46,5 +46,5 @@ def install(libpack):
     
     libpack.manifest_add(name, version, files)
 
-    shutil.rmtree(tmp_install)
+    utils.shutil.rmtree(tmp_install)
 

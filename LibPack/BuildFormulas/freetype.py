@@ -50,8 +50,8 @@ def install(libpack):
             utils.run_cmd("vcbuild", ["INSTALL.vcproj", "Release|Win32"])
             utils.run_cmd("vcbuild", ["INSTALL.vcproj", "Debug|Win32"])
             
-    files = utils.move(os.path.join(tmp_install, "include"),
-                       libpack.path, "include", root=False)
+    files = utils.move(os.path.join(tmp_install, "include\\freetype2"),
+                       libpack.path, "include")
     
     files.extend(utils.move(os.path.join(tmp_install, "lib"),
                             libpack.path, "lib", root=False))
@@ -61,4 +61,5 @@ def install(libpack):
     libpack.manifest_add(name, version, files)
 
     os.chdir("..")
+    utils.shutil.rmtree(tmp_install)
 
