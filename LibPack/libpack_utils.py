@@ -239,6 +239,7 @@ def copytree(src, dest_root, dest, symlinks=False, root=True, ignore=None):
                 if os.path.isfile(subsrc):
                     if not os.path.exists(abs_dest):
                         os.mkdir(abs_dest)
+                    print(os.path.join(abs_dest, name))
                     shutil.copy(subsrc, abs_dest)
                     copied.append(os.path.join(dest, name))
                 elif os.path.isdir(subsrc):
@@ -285,12 +286,13 @@ def move(src, dest_root, dest, root=True, ignore=None):
                     shutil.rmtree(dest_src)
                 if os.path.isfile(dest_src):
                     os.remove(dest_src)
-                    
+                print(os.path.join(abs_dest, name))    
                 shutil.move(subsrc, abs_dest)
-                moved.append(os.path.join(dest, os.path.basename(subsrc)))
+                moved.append(os.path.join(dest, name))
     else:
         #delete if already exists
         dest_src = os.path.join(abs_dest, os.path.basename(src))
+        print(dest_src)
         if os.path.isdir(dest_src):
             shutil.rmtree(dest_src)
         if os.path.isfile(dest_src):
