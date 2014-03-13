@@ -1,0 +1,32 @@
+--- libsrc\meshing\meshtype.hpp	Sat Feb 11 18:21:34 2012
++++ libsrc\meshing\meshtype_new.hpp	Thu Mar 13 12:21:49 2014
+@@ -170,7 +170,7 @@
+   }
+ 
+ 
+-  class SurfaceElementIndex
++  class DLL_HEADER SurfaceElementIndex
+   {
+     int i;
+   public:
+@@ -226,7 +226,7 @@
+      Point in the mesh.
+      Contains layer (a new feature in 4.3 for overlapping meshes.
+   */
+-  class MeshPoint : public Point<3>
++  class DLL_HEADER MeshPoint : public Point<3>
+   {
+     int layer;
+     double singular; // singular factor for hp-refinement
+@@ -334,9 +334,9 @@
+ 
+   public:
+     ///
+-    Element2d ();
++    DLL_HEADER Element2d ();
+     ///
+-    Element2d (int anp);
++    DLL_HEADER Element2d (int anp);
+     ///
+     DLL_HEADER Element2d (ELEMENT_TYPE type);
+     ///

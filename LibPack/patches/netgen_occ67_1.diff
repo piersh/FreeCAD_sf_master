@@ -1,11 +1,13 @@
---- libsrc\occ\Partition_Spliter.cxx	Sun Aug 23 19:12:24 2009
-+++ libsrc\occ\Partition_Spliter_new.cxx	Thu Mar  6 23:33:36 2014
-@@ -1169,7 +1169,7 @@
+--- libsrc\occ\Partition_Spliter.cxx	Wed Mar 12 23:39:54 2014
++++ libsrc\occ\Partition_Spliter_new.cxx	Thu Mar 13 00:00:58 2014
+@@ -1169,8 +1169,8 @@
            for (; j<=nbj && ok; ++j) {
              if (Extrema.IsMin(j)) {
  	      hasMin = Standard_True;
--              ok = Extrema.Value(j) <= tol;
-+              ok = Extrema.SquareDistance(j) <= tol;
+-	      ok = Extrema.Value(j) <= tol;  // V6.3
+-	      // ok = Extrema.SquareDistance(j) <= tol;  // V6.5
++	      //ok = Extrema.Value(j) <= tol;  // V6.3
++	      ok = Extrema.SquareDistance(j) <= tol;  // V6.5
  	    }
            }
          }

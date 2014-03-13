@@ -3,10 +3,9 @@ import os
 from subprocess import CalledProcessError
 
 name = "netgen"
-version = "4.9.13"
-source = {"type":"archive", "url":
-          "http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher"\
-          "/4.9.13/netgen-4.9.13.zip"}
+version = "4.9.14"
+source = {"type":"archive", "url":"http://sourceforge.net/code-snapshots/svn"\
+          "/n/ne/netgen-mesher/code/netgen-mesher-code-751-branches-netgen-4.9.zip"}
 depends_on = ["oce"]
     
 def build(libpack):
@@ -22,27 +21,29 @@ def build(libpack):
             pthread_url = "http://sourceforge.net/projects/netgen-mesher/files"\
                           "/netgen-mesher/Additional%20Files/MSVC2008_Libs"\
                           "/pthread-w" + bit + ".zip"
-            #tcl_url = "http://sourceforge.net/projects/netgen-mesher/files"\
-            #          "/netgen-mesher/Additional%20Files/MSVC2008_Libs"\
-            #          "/TclTkTixTogl-w" + bit + ".zip"
+            tcl_url = "http://sourceforge.net/projects/netgen-mesher/files"\
+                      "/netgen-mesher/Additional%20Files/MSVC2008_Libs"\
+                      "/TclTkTixTogl-w" + bit + ".zip"
+            pthread_dirname = os.path.basename(pthread_url).split(".")[0]
+            tcl_dirname = os.path.basename(tcl_url).split(".")[0]
             utils.get_source({"type":"archive", "url":pthread_url},
-                              "..\\ext_libs",
-                             os.path.basename(pthread_url).split(".")[0])
+                              "..\\ext_libs", pthread_dirname)
+            utils.get_source({"type":"archive", "url":tcl_url},
+                              "..\\ext_libs", tcl_dirname)
 
-            utils.apply_patch(os.path.join(os.path.dirname(__file__),
-                              "..\\patches\\netgen_vcproj.diff"))
-            utils.apply_patch(os.path.join(os.path.dirname(__file__),
-                              "..\\patches\\netgen_occ67_1.diff"))
-            utils.apply_patch(os.path.join(os.path.dirname(__file__),
-                              "..\\patches\\netgen_occ67_2.diff"))
-            utils.apply_patch(os.path.join(os.path.dirname(__file__),
-                              "..\\patches\\netgen_occ67_3.diff"))
-            utils.apply_patch(os.path.join(os.path.dirname(__file__),
-                              "..\\patches\\netgen_occ67_4.diff"))
+            patches = ["vcproj", "occ67_1", "occ67_2", "occ67_3", 
+                       "dllexport1", "dllexport2", "dllexport3", "dllexport4"]
+            for n in patches:
+                filename = "..\\patches\\netgen_{0}.diff".format(n)
+                utils.apply_patch(os.path.join(os.path.dirname(__file__),
+                                  filename))
 
             os.environ["LIB"] = os.environ["LIB"] + libpack.path + "\\lib"
             os.environ["INCLUDE"] = os.environ["INCLUDE"] + libpack.path \
-                                    + "\\include\\oce"
+                                    + "\\include\\oce;"
+            tcl_include = libpack.config.get("Paths", "workspace") \
+                          + "\\ext_libs\\" + tcl_dirname + "\\include;"
+            os.environ["INCLUDE"] = os.environ["INCLUDE"] + tcl_include
 
             print("\nBuilding release...\n")
             utils.run_cmd("vcbuild", ["/useenv", "windows\\nglib.sln",

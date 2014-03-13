@@ -1,0 +1,11 @@
+--- libsrc\meshing\meshclass.hpp	Fri Sep  2 05:37:54 2011
++++ libsrc\meshing\meshclass_new.hpp	Thu Mar 13 12:14:50 2014
+@@ -331,7 +331,7 @@
+     { dimension = dim; }
+ 
+     /// sets internal tables
+-    void CalcSurfacesOfNode ();
++    DLL_HEADER void CalcSurfacesOfNode ();
+ 
+     /// additional (temporarily) fix points 
+     void FixPoints (const BitArray & fixpoints);
