@@ -409,7 +409,6 @@ else(FREECAD_LIBPACK_USE)
     find_package (OCE QUIET)
     if(${OCE_FOUND})
         message("-- OpenCASCADE Community Edition has been found.")
-        add_definitions (-DHAVE_CONFIG_H)
         #lib list copied from FreeCAD's FindOpenCasCade.cmake
         set(OCC_LIBRARIES
             TKFillet
@@ -515,6 +514,7 @@ else(FREECAD_LIBPACK_USE)
     SET(QT_MIN_VERSION 4.5.0)
     set(QT_USE_QTNETWORK TRUE)
     set(QT_USE_QTXML TRUE)
+    set(QT_USE_QTMAIN TRUE)
     if(FREECAD_BUILD_GUI)
         set(QT_USE_QTOPENGL TRUE)
         set(QT_USE_QTSVG TRUE)
@@ -549,7 +549,11 @@ else(FREECAD_LIBPACK_USE)
         foreach(it ${moc_files})
             get_filename_component(it ${it} ABSOLUTE)
             QT4_MAKE_OUTPUT_FILE(${it} moc_ cpp outfile)
-            QT4_CREATE_MOC_COMMAND(${it} ${outfile} "${moc_flags}" "${moc_options}" "${moc_target}")
+            ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
+                COMMAND ${QT_MOC_EXECUTABLE}
+                ARGS ${moc_options} ${it} -o ${outfile}
+                MAIN_DEPENDENCY ${it}
+            )
             set(${outfiles} ${${outfiles}} ${outfile})
             add_file_dependencies(${it} ${outfile})
         endforeach(it)

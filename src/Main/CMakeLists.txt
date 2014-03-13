@@ -30,17 +30,17 @@ if(FREECAD_BUILD_GUI)
         MainGui.cpp
     )
 
-    if(MSVC)
+    if(MSVC AND FREECAD_LIBPACK_USE)
         SET(FreeCAD_LIBS
             FreeCADGui
             debug qtmaind.lib
             optimized qtmain.lib
         )
-    else(MSVC)
+    else(MSVC AND FREECAD_LIBPACK_USE)
         SET(FreeCAD_LIBS
             FreeCADGui
         )
-    endif(MSVC)
+    endif(MSVC AND FREECAD_LIBPACK_USE)
 
     add_executable(FreeCADMain WIN32 ${FreeCAD_SRCS})
     target_link_libraries(FreeCADMain ${FreeCAD_LIBS})

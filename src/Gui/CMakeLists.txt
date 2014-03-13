@@ -25,7 +25,7 @@ include_directories(
     ${ZLIB_INCLUDE_DIR}
 )
 
-if(MSVC)
+if(MSVC AND FREECAD_LIBPACK_USE)
     set(FreeCADGui_LIBS
          FreeCADApp
          debug ${COIN3D_LIBRARY_DEBUG}
@@ -37,7 +37,17 @@ if(MSVC)
          QtUiTools.lib
          ${OPENGL_gl_LIBRARY}
     )
-else(MSVC)
+elseif(MSVC)
+    set(FreeCADGui_LIBS
+         FreeCADApp
+         debug ${COIN3D_LIBRARY_DEBUG}
+         optimized ${COIN3D_LIBRARY_RELEASE}
+         debug ${SOQT_LIBRARY_DEBUG}
+         optimized ${SOQT_LIBRARY_RELEASE}
+         ${QT_LIBRARIES}
+         ${OPENGL_gl_LIBRARY}
+    )
+else(MSVC AND FREECAD_LIBPACK_USE)
     set(FreeCADGui_LIBS
         FreeCADBase
         FreeCADApp
@@ -47,7 +57,7 @@ else(MSVC)
         ${Boost_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
     )
-endif(MSVC)
+endif(MSVC AND FREECAD_LIBPACK_USE)
 
 IF(SPNAV_FOUND)
     add_definitions(-DSPNAV_FOUND)

@@ -17,7 +17,7 @@ include_directories(
     ${PYCXX_INCLUDE_DIR}
 )
 
-if(MSVC)
+if(MSVC AND FREECAD_LIBPACK_USE)
     set(FreeCADBase_LIBS
         ${Boost_LIBRARIES}
         ${Boost_DEBUG_LIBRARIES}
@@ -25,6 +25,22 @@ if(MSVC)
         optimized ${PYTHON_LIBRARY}
         debug ${XERCESC_DEBUG_LIBRARIES}
         optimized ${XERCESC_LIBRARIES}
+        ${QT_QTCORE_LIBRARY}
+        ${QT_QTCORE_LIBRARY_DEBUG}
+        ${ZLIB_LIBRARIES}
+        debug MSVCRTD.LIB
+        debug MSVCPRTD.LIB
+        optimized MSVCRT.LIB
+        optimized MSVCPRT.LIB
+        Rpcrt4.lib
+    )
+elseif(MSVC)
+    set(FreeCADBase_LIBS
+        ${Boost_LIBRARIES}
+        ${Boost_DEBUG_LIBRARIES}
+        debug ${PYTHON_DEBUG_LIBRARY}
+        optimized ${PYTHON_LIBRARY}
+        ${XERCESC_LIBRARIES}
         ${QT_QTCORE_LIBRARY}
         ${QT_QTCORE_LIBRARY_DEBUG}
         ${ZLIB_LIBRARIES}
@@ -43,7 +59,7 @@ elseif(MINGW)
         ${ZLIB_LIBRARIES}
         Rpcrt4.lib
     )
-else(MSVC)
+else(MSVC AND FREECAD_LIBPACK_USE)
     set(FreeCADBase_LIBS
         ${PYTHON_LIBRARY}
         ${XERCESC_LIBRARIES}
@@ -53,7 +69,7 @@ else(MSVC)
         -lutil
         -ldl
     )
-endif(MSVC)
+endif(MSVC AND FREECAD_LIBPACK_USE)
 
 generate_from_xml(BaseClassPy)
 generate_from_xml(BoundBoxPy)
