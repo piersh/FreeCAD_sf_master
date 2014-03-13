@@ -1,0 +1,15 @@
+--- include\Inventor\elements\SoTextureCoordinateElement.h	Tue Mar  2 13:20:08 2010
++++ include\Inventor\elements\SoTextureCoordinateElement_new.h	Thu Mar 13 14:02:05 2014
+@@ -48,7 +48,10 @@
+   virtual ~SoTextureCoordinateElement();
+ 
+ public:
+-
++//ivec.h seems to define EXPLICIT which causes a syntax error here
++#ifdef EXPLICIT
++#undef EXPLICIT
++#endif
++
+   enum CoordType {
+     NONE = 0,
+     TEXGEN = 0,

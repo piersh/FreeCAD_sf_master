@@ -10,6 +10,9 @@ depends_on = []
 def build(libpack):
     
     if libpack.toolchain.startswith("vc"):
+        utils.apply_patch(os.path.join(os.path.dirname(__file__),
+                          "..\\patches\\coin_macro_error.diff"))
+                              
         if libpack.toolchain == "vc9":
             vcproj = "build\\msvc9\coin3.vcproj"
             print("\nBuilding release...\n")
