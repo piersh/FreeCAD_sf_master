@@ -27,12 +27,12 @@ IF (WIN32)
       "[HKEY_LOCAL_MACHINE\\SOFTWARE\\SIM\\Coin3D\\2;Installation Path]/include"
     )
 
-    FIND_LIBRARY(COIN3D_LIBRARY_DEBUG coin2d
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\SIM\\Coin3D\\2;Installation Path]/lib"
+    FIND_LIBRARY(COIN3D_LIBRARY_DEBUG coin2d coin3d
+      PATHS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\SIM\\Coin3D\\2;Installation Path]/lib"
     )
 
-    FIND_LIBRARY(COIN3D_LIBRARY_RELEASE coin2
-      "[HKEY_LOCAL_MACHINE\\SOFTWARE\\SIM\\Coin3D\\2;Installation Path]/lib"
+    FIND_LIBRARY(COIN3D_LIBRARY_RELEASE coin2 coin3
+      PATHS "[HKEY_LOCAL_MACHINE\\SOFTWARE\\SIM\\Coin3D\\2;Installation Path]/lib"
     )
 
     IF (COIN3D_LIBRARY_DEBUG AND COIN3D_LIBRARY_RELEASE)
