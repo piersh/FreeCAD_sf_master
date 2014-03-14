@@ -363,7 +363,18 @@ endif(MSVC)
 ##############
 # MEFISTO2   #
 ##############
-if (MSVC)
+if(FREECAD_USE_F2C)
+    fortran_to_c(f2c_SRCS src/MEFISTO2/trte.f)
+
+    FILE(GLOB MEFISTO2_source_files
+        src/MEFISTO2/*.cpp
+        inc/Rn.h
+        inc/aptrte.h
+    )
+    set(MEFISTO2_source_files ${MEFISTO2_source_files} ${f2c_SRCS})
+
+    set(MEFISTO2_LIBS ${SMESH_LIBS} ${F2C_LIBRARY})
+elseif(MSVC)
     IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
         # Mefisto2f.lib was built using f2c which created
         # all function names with an '_' at the end.
@@ -380,36 +391,38 @@ if (MSVC)
             inc/aptrte.h
         )
     ENDIF(CMAKE_SIZEOF_VOID_P EQUAL 8)
-else(MSVC)
+    
+    set(MEFISTO2_LIBS ${SMESH_LIBS} MEFISTO2f.lib) # use prebuilt Fortran lib
+else(FREECAD_USE_F2C)
     FILE(GLOB MEFISTO2_source_files
         src/MEFISTO2/*.cpp
         src/MEFISTO2/trte.f
         inc/Rn.h
         inc/aptrte.h
     )
-endif(MSVC)
+    set(MEFISTO2_LIBS ${SMESH_LIBS} gfortran)
+endif(FREECAD_USE_F2C)
 
 ADD_LIBRARY(MEFISTO2 SHARED ${MEFISTO2_source_files})
+TARGET_LINK_LIBRARIES(MEFISTO2 ${MEFISTO2_LIBS})
 
 if(MSVC)
-    TARGET_LINK_LIBRARIES(MEFISTO2 ${SMESH_LIBS} MEFISTO2f.lib) # in case of Windows link the prebuild Fortran lib
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    if(FREECAD_USE_F2C OR CMAKE_SIZEOF_VOID_P EQUAL 8)
         set_target_properties(MEFISTO2 PROPERTIES COMPILE_FLAGS "-DMEFISTO2D_EXPORTS")
-    else(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    elseif(NOT FREECAD_USE_F2C AND NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
         set_target_properties(MEFISTO2 PROPERTIES COMPILE_FLAGS "-DMEFISTO2D_EXPORTS -D__WATCOM__")
-    endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    endif(FREECAD_USE_F2C OR CMAKE_SIZEOF_VOID_P EQUAL 8)
+
     set_target_properties(MEFISTO2 PROPERTIES DEBUG_OUTPUT_NAME "MEFISTO2d")
     set_target_properties(MEFISTO2 PROPERTIES OUTPUT_NAME "MEFISTO2")
     set_target_properties(MEFISTO2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
     set_target_properties(MEFISTO2 PROPERTIES PREFIX "../")
 elseif(MINGW)
-    TARGET_LINK_LIBRARIES(MEFISTO2 ${SMESH_LIBS} gfortran)
     set_target_properties(MEFISTO2 PROPERTIES COMPILE_FLAGS "-DMEFISTO2D_EXPORTS")
     set_target_properties(MEFISTO2 PROPERTIES OUTPUT_NAME "MEFISTO2")
     set_target_properties(MEFISTO2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
     set_target_properties(MEFISTO2 PROPERTIES PREFIX "")
 else(MSVC)
-    TARGET_LINK_LIBRARIES(MEFISTO2 ${SMESH_LIBS} gfortran)
     set_target_properties(MEFISTO2 PROPERTIES COMPILE_FLAGS "${MEFISTO2_CFLAGS}")
     set_target_properties(MEFISTO2 PROPERTIES OUTPUT_NAME "MEFISTO2") 
     set_target_properties(MEFISTO2 PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

@@ -203,3 +203,24 @@ MACRO(GET_MSVC_PRECOMPILED_SOURCE PrecompiledSource SourcesVar)
     ENDFOREACH (it)
   ENDIF(MSVC)
 ENDMACRO(GET_MSVC_PRECOMPILED_SOURCE)
+
+macro(fortran_to_c outfiles)
+    foreach(it ${ARGN})
+        get_filename_component(name ${it} NAME)
+        get_filename_component(basename ${it} NAME_WE)
+        set(fortran_file ${CMAKE_CURRENT_SOURCE_DIR}/${it})
+        set(out ${CMAKE_CURRENT_BINARY_DIR}/${basename}.c)
+        file(TO_NATIVE_PATH ${fortran_file} fortran_file)
+        file(TO_NATIVE_PATH ${out} cmdout)
+        file(TO_NATIVE_PATH ${F2C_EXECUTABLE} f2c_cmd)
+        #since f2c creates the output file in the same place as the input file,
+        #pipe input file to f2c so we can redirect output to where ever
+        add_custom_command(
+            OUTPUT ${out}
+            COMMAND ${FILE_TO_STDOUT} ${fortran_file} | ${f2c_cmd} > ${cmdout}
+            MAIN_DEPENDENCY ${fortran_file}
+            COMMENT "Converting ${name} to c"
+        )
+        set(${outfiles} ${${outfiles}} ${out})
+    endforeach(it)
+endmacro(fortran_to_c)

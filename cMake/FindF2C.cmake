@@ -1,39 +1,19 @@
-# This module finds the f2c library.
+# This module finds f2c.
 #
 # This module sets the following variables:
 #  F2C_FOUND - set to true if library is found
-#  F2C_DEFINITIONS - compilation options to use f2c
-#  F2C_LIBRARIES - f2c library name (using full path name)
+#  F2C_INCLUDE_DIR - path to f2c.h
+#  F2C_LIBRARY - f2c library name (using full path name)
+#  F2C_EXECUTABLE - the f2c executable (using full path name)
 
-if (F2C_LIBRARIES)
+find_path(F2C_INCLUDE_DIR f2c.h)
 
-  set(F2C_FOUND TRUE)
+find_library(F2C_LIBRARY NAMES f2c vcf2c)
 
-else(F2C_LIBRARIES)
+find_program(F2C_EXECUTABLE f2c)
 
-  set(F2C_DEFINITIONS)
-
-  find_library(F2C_LIBRARIES f2c
-               /usr/lib
-               /usr/local/lib
-              )
-
-  if(F2C_LIBRARIES)
-    set(F2C_FOUND TRUE)
-  else()
-    set(F2C_FOUND FALSE)
-  endif()
-
-  if(NOT F2C_FIND_QUIETLY)
-    if(F2C_FOUND)
-      message(STATUS "f2c library found.")
-    else(F2C_FOUND)
-      if(F2C_FIND_REQUIRED)
-        message(FATAL_ERROR "f2c library not found. Please specify library location.")
-      else()
-        message(STATUS "f2c library not found. Please specify library location.")
-      endif()
-    endif(F2C_FOUND)
-  endif(NOT F2C_FIND_QUIETLY)
-
-endif(F2C_LIBRARIES)
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(F2C REQUIRED_VARS 
+    F2C_INCLUDE_DIR 
+    F2C_LIBRARY
+    F2C_EXECUTABLE)

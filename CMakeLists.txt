@@ -102,6 +102,12 @@ endif(MSVC)
 # ==============================================================================
 # == All the options for the build process    ============
 
+if(NOT CMAKE_COMPILER_IS_GNUCXX AND NOT FREECAD_LIBPACK_USE)
+    OPTION(FREECAD_USE_F2C "Translate fortran code to C" ON)
+else(NOT CMAKE_COMPILER_IS_GNUCXX AND NOT FREECAD_LIBPACK_USE)
+    OPTION(FREECAD_USE_F2C "Translate fortran code to C" OFF)
+endif(NOT CMAKE_COMPILER_IS_GNUCXX AND NOT FREECAD_LIBPACK_USE)
+
 OPTION(FREECAD_BUILD_GUI "Build FreeCAD Gui. Otherwise you have only the command line and the Python import module." ON)
 OPTION(FREECAD_MAINTAINERS_BUILD "Build FreeCAD for Maintainers, with Docu and 3rd party libs. On Windows the Installer is build." OFF)
 OPTION(FREECAD_USE_EXTERNAL_ZIPIOS "Use system installed zipios++ instead of the bundled." OFF)
@@ -620,6 +626,18 @@ else(FREECAD_LIBPACK_USE)
 
 
 endif(FREECAD_LIBPACK_USE)
+
+#f2c
+if(FREECAD_USE_F2C)
+    find_package(F2C REQUIRED)
+    
+    #needed so we can read fortran file from stdin
+    if(WIN32)
+        set(FILE_TO_STDOUT type)
+    else(WIN32)
+        set(FILE_TO_STDOUT cat)    
+    endif(WIN32)
+endif(FREECAD_USE_F2C)
 
 # copy build convenient files for M$
 if(WIN32)
