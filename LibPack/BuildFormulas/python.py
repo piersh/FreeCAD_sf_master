@@ -19,6 +19,11 @@ def build(libpack):
                 print("\nBuilding release...\n")
                 utils.run_cmd("vcbuild", ["PCbuild\\pcbuild.sln",
                                           "Release|Win32"])
+            except CalledProcessError as e:
+                #ignore errors because we don't need the modules that
+                #fail to build
+                print(e)
+            try:
                 print("\nBuilding debug...\n")
                 utils.run_cmd("vcbuild", ["PCbuild\\pcbuild.sln",
                                           "Debug|Win32"])
@@ -33,7 +38,8 @@ def install(libpack):
     files = utils.copytree("Include", libpack.path, "include\\python2.7")
     files.extend(utils.copyfiles(["PC\\pyconfig.h"], libpack.path, "include\\python2.7"))
     
-    utils.run_cmd("7z", ["a", "-r", libpack.path + "\\bin\\python27.zip", ".\\Lib\\*"],
+    utils.run_cmd("7z", ["a", "-r", "-x!*.pyc", libpack.path + "\\bin\\python27.zip", 
+                         ".\\Lib\\*"],
                   silent=True)
     files.append("bin\\python27.zip")
     

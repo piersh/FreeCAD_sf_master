@@ -1,20 +1,79 @@
---- PC\pyconfig.h	Fri Mar  7 19:34:25 2014
-+++ PC\pyconfig_new.h	Mon Mar 10 11:12:09 2014
-@@ -396,7 +396,7 @@
+--- PC\pyconfig.h	Fri Mar 14 15:22:01 2014
++++ PC\pyconfig_new.h	Fri Mar 14 18:14:30 2014
+@@ -396,39 +396,70 @@
  
  /* define signed and unsigned exact-width 32-bit and 64-bit types, used in the
     implementation of Python long integers. */
--#ifndef PY_UINT32_T
-+/*#ifndef PY_UINT32_T
++/* defining HAVE_<int>_T but no typedef can cause errors with other applications */
+ #ifndef PY_UINT32_T
  #if SIZEOF_INT == 4
- #define HAVE_UINT32_T 1
+-#define HAVE_UINT32_T 1
  #define PY_UINT32_T unsigned int
-@@ -428,7 +428,7 @@
- #define HAVE_INT64_T 1
- #define PY_INT64_T PY_LONG_LONG
+-#elif SIZEOF_LONG == 4
++
++#ifndef HAVE_UINT32_T
+ #define HAVE_UINT32_T 1
++typedef unsigned int uint32_t;
++#endif
++
++#elif SIZEOF_LONG == 4
+ #define PY_UINT32_T unsigned long
++
++#ifndef HAVE_UINT32_T
++#define HAVE_UINT32_T 1
++typedef unsigned long uint32_t;
  #endif
--#endif
-+#endif*/
++
+ #endif
++#endif /* PY_UINT32_T */
+ 
+ #ifndef PY_UINT64_T
+ #if SIZEOF_LONG_LONG == 8
+-#define HAVE_UINT64_T 1
+ #define PY_UINT64_T unsigned PY_LONG_LONG
++
++#ifndef HAVE_UINT64_T
++#define HAVE_UINT64_T 1
++typedef unsigned PY_LONG_LONG uint64_t;
+ #endif
++
+ #endif
++#endif /* PY_UINT64_T */
+ 
+ #ifndef PY_INT32_T
+ #if SIZEOF_INT == 4
+-#define HAVE_INT32_T 1
+ #define PY_INT32_T int
+-#elif SIZEOF_LONG == 4
++
++#ifndef HAVE_INT32_T
+ #define HAVE_INT32_T 1
++typedef int int32_t;
++#endif
++
++#elif SIZEOF_LONG == 4
+ #define PY_INT32_T long
++
++#ifndef HAVE_INT32_T
++#define HAVE_INT32_T 1
++typedef long int32_t;
+ #endif
++
+ #endif
++#endif /* PY_INT32_T */
+ 
+ #ifndef PY_INT64_T
+ #if SIZEOF_LONG_LONG == 8
+-#define HAVE_INT64_T 1
+ #define PY_INT64_T PY_LONG_LONG
++
++#ifndef HAVE_INT64_T
++#define HAVE_INT64_T 1
++typedef PY_LONG_LONG int64_t;
+ #endif
++
+ #endif
++#endif /* PY_INT64_T */
  
  /* Fairly standard from here! */
  
