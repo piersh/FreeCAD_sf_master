@@ -306,7 +306,7 @@ class Subcommand:
         opts, args = parser.parse_args(arg_list)
         
         if self.callback != None:
-            self.callback(opts, args)
+            self.callback(parser, opts, args)
             
         parser.destroy()
         
@@ -331,21 +331,34 @@ class CommandParser(optparse.OptionParser):
     def parse_args(self, args=None, values=None):
         if args == None:
             args = sys.argv[1:]
-
+        
         if args[0] in self.subcommands.keys():
             self.subcommands[args[0]].parse_args(args[1:])
+        elif not args[0].startswith("-"):
+            self.error("unknown subcommand " + args[0])
         else:
-            optparse.OptionParser.parse_args(self, args, values)       
+            optparse.OptionParser.parse_args(self, args, values)
 
-def on_new(options, args):
-    #print(options, args)
+def on_new(parser, options, args):
+    if not args:
+        parser.error("toolchain argument is required")
+    if args[0] != "vc9":
+        parser.error("only vc9 is supported at the moment")
+    if options.arch != "x86":
+        parser.error("only x86 is supported at the moment")
     LIBPACK.new(args[0], options.arch)
 
-def on_install(options, args):
-    LIBPACK.install(args[0])
+def on_install(parser, options, args):
+    if not args:
+        parser.error("no formula specified")
+    for n in args:
+        LIBPACK.install(n)
 
-def on_uninstall(options, args):
-    LIBPACK.uninstall(args[0])
+def on_uninstall(parser, options, args):
+    if not args:
+        parser.error("no formula specified")
+    for n in args:
+        LIBPACK.uninstall(n)
     
 def parse_command_line():
     parser = CommandParser()
