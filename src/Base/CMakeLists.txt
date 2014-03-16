@@ -42,7 +42,6 @@ elseif(MSVC)
         optimized ${PYTHON_LIBRARY}
         ${XERCESC_LIBRARIES}
         ${QT_QTCORE_LIBRARY}
-        ${QT_QTCORE_LIBRARY_DEBUG}
         ${ZLIB_LIBRARIES}
         debug MSVCRTD.LIB
         debug MSVCPRTD.LIB

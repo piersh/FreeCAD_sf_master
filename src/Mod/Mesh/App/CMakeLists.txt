@@ -18,9 +18,6 @@ include_directories(
 
 
 set(Mesh_LIBS
-    ${Boost_LIBRARIES}
-    ${QT_QTCORE_LIBRARY}
-    ${QT_QTCORE_LIBRARY_DEBUG}
     FreeCADBase
     FreeCADApp
 )
