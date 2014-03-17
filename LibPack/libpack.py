@@ -5,6 +5,7 @@ import shutil
 import optparse
 import pkgutil
 import sqlite3
+import textwrap
 from ConfigParser import SafeConfigParser
 from subprocess import CalledProcessError
 
@@ -287,7 +288,29 @@ class LibPack:
         print("Successfully uninstalled " + name)
     
 
-
+class CustomHelpFormatter(optparse.IndentedHelpFormatter):
+    def __init__(self,
+                 indent_increment=0,
+                 max_help_position=24,
+                 width=None,
+                 short_first=0):
+        optparse.IndentedHelpFormatter.__init__(
+            self, indent_increment, max_help_position, width, short_first)
+        
+    def format_description(self, description):
+        paragraphs = description.split("\n\n")
+        result = []
+        
+        for p in paragraphs:
+            s = optparse.IndentedHelpFormatter.format_description(self, p)
+            if s:
+                result.append(s)
+                result.append('\n')
+        if result:
+            #drop last \n
+            return "".join(result[:-1])
+        return ""
+        
 class Subcommand:
     def __init__(self, name, options=[], args=None, callback=None,
                  usage="", short_help="", detailed_help=""):
@@ -301,7 +324,9 @@ class Subcommand:
         
     def parse_args(self, arg_list):
         help = self.short_help + "\n\n" + self.detailed_help
-        parser = optparse.OptionParser(usage=self.usage, description=help)
+        
+        parser = optparse.OptionParser(usage=self.usage, description=help,
+                                       formatter=CustomHelpFormatter())
         parser.add_options(self.options)
         opts, args = parser.parse_args(arg_list)
         
@@ -338,6 +363,61 @@ class CommandParser(optparse.OptionParser):
             self.error("unknown subcommand " + args[0])
         else:
             optparse.OptionParser.parse_args(self, args, values)
+    
+    def _compute_help_indentation(self, formatter):
+        formatter.indent()
+        max_len = 0
+        #find the longest command name
+        for k in self.subcommands.keys():
+            max_len = max(max_len, len(self.subcommands[k].name) + formatter.current_indent)
+        formatter.dedent()
+        
+        formatter.help_position = min(max_len + 2, formatter.max_help_position)
+        formatter.help_width = max(formatter.width - formatter.help_position, 11)
+        
+    def format_command_help(self, formatter):
+        self._compute_help_indentation(formatter)
+        command_help = []
+        command_help.append(formatter.format_heading("Commands"))
+
+        formatter.indent()
+        
+        help_list = []
+        for k in self.subcommands.keys():
+            cmd = self.subcommands[k]
+            width = formatter.help_position - formatter.current_indent - 2
+            cmd_str = "%*s%-*s  " % (formatter.current_indent, "", width, cmd.name)
+            indent_first = 0
+            help_list.append(cmd_str)
+            
+            if cmd.short_help:
+                help_lines = textwrap.wrap(cmd.short_help, formatter.help_width)
+                help_list.append("%*s%s\n" % (indent_first, "", help_lines[0]))
+                help_list.extend(["%*s%s\n" % (formatter.help_position, "", line)
+                               for line in help_lines[1:]])
+        
+            else:
+                help_list.append("\n")
+                
+        command_help.append("".join(help_list))
+        command_help.append("\n")
+        
+        formatter.dedent()
+        
+        return "".join(command_help)
+        
+    def format_help(self, formatter=None):
+        if formatter is None:
+            formatter = self.formatter
+        result = []
+        if self.usage:
+            result.append(self.get_usage() + "\n")
+        if self.description:
+            result.append(self.format_description(formatter) + "\n")
+        result.append(self.format_command_help(formatter))
+        result.append(self.format_option_help(formatter))
+        result.append(self.format_epilog(formatter))
+        return "".join(result)
 
 def on_new(parser, options, args):
     if not args:
@@ -359,14 +439,18 @@ def on_uninstall(parser, options, args):
         parser.error("no formula specified")
     for n in args:
         LIBPACK.uninstall(n)
-    
-def parse_command_line():
-    parser = CommandParser()
 
+def setup_parser(parser):
+    parser.usage = "%prog <command> [options]" 
+    parser.description = "Type '%prog <command> --help' for more information "\
+                         "on a specific command"
+    
     usage = "{0} {1} [options]"
     help = "Sets up a new LibPack"
     parser.add_subcommand("new", callback=on_new,
-                          usage=usage.format("new","TOOLCHAIN"), short_help=help)
+                          usage=usage.format("new","TOOLCHAIN"), 
+                          short_help=help,
+                          detailed_help="Currently, only vc9 is the only supported TOOLCHAIN, and only x86")
     parser.add_option("-a", subcmd="new", dest="arch",
                       choices=["x86","x64"], default="x86",
                       help="Set build architecure {x86, x64} [default: %default]")
@@ -374,17 +458,17 @@ def parse_command_line():
     help = "Install a library into the LibPack"
     parser.add_subcommand("install", callback=on_install,
                           usage=usage.format("install","FORMULA"),short_help=help)
+    help = "Remove a library from the LibPack"
     parser.add_subcommand("uninstall", callback=on_uninstall,
-                          usage=usage.format("uninstall","FORMULA"))
-    #parser.parse_args(["new", "vc9", "-a", "x86"])
-    #parser.parse_args(["install", "freetype"])
-    parser.parse_args()
-    
+                          usage=usage.format("uninstall","FORMULA"),short_help=help)
+
 def main():
     global LIBPACK
     try:
         LIBPACK = LibPack()
-        parse_command_line()
+        parser = CommandParser()
+        setup_parser(parser)
+        parser.parse_args()
     except (ValueError, LibPackError) as e:
         print(e, file=sys.stderr)
         
