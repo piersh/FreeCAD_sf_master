@@ -7,31 +7,36 @@ version = "2.7.6"
 source = {"type":"archive", "url":
           "http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tgz"}
 depends_on = []
-    
+patches = ["python_pyconfig.diff"]
+
 def build(libpack):
     
     if libpack.toolchain.startswith("vc"):
-        utils.apply_patch(os.path.join(os.path.dirname(__file__),
-                          "..\\patches\\python_pyconfig.diff"))
+
+        old_dir = os.chdir("PCbuild")
+
+        if libpack.toolchain == "vc12":
+            if utils.check_update("python.vcproj", "python.vcxproj"):
+                utils.run_cmd("devenv", ["/upgrade", "pcbuild.sln"])
         
-        if libpack.toolchain == "vc9":
-            try:
-                print("\nBuilding release...\n")
-                utils.run_cmd("vcbuild", ["PCbuild\\pcbuild.sln",
-                                          "Release|Win32"])
-            except CalledProcessError as e:
-                #ignore errors because we don't need the modules that
-                #fail to build
-                print(e)
-            try:
-                print("\nBuilding debug...\n")
-                utils.run_cmd("vcbuild", ["PCbuild\\pcbuild.sln",
-                                          "Debug|Win32"])
-            except CalledProcessError as e:
-                #ignore errors because we don't need the modules that
-                #fail to build
-                print(e)
-            
+        try:
+            print("\nBuilding release...\n")
+            libpack.vcbuild("pcbuild.sln", "Release", "Win32")
+        except CalledProcessError as e:
+            #ignore errors because we don't need the modules that
+            #fail to build
+            print(e)
+
+        try:
+            print("\nBuilding debug...\n")
+            libpack.vcbuild("pcbuild.sln", "Debug", "Win32")
+        except CalledProcessError as e:
+            #ignore errors because we don't need the modules that
+            #fail to build
+            print(e)
+
+        os.chdir(old_dir)
+        
 
     
 def install(libpack): 

@@ -8,15 +8,26 @@ source = {"type":"archive", "url":
           "http://download.qt-project.org/official_releases"\
           "/qt/4.8/4.8.5/qt-everywhere-opensource-src-4.8.5.zip"}
 depends_on = []
+patches = ["qt"]
     
 def build(libpack):
     if platform == "win32":
         print("\nBuilding release and debug...\n")
-        utils.run_shell("configure -opensource -confirm-license "
-                        "-debug-and-release -mp -no-qt3support "
-                        "-no-phonon -no-multimedia -no-declarative-debug "
-                        "-nomake tests -nomake examples -nomake demos "
-                        "-nomake docs -no-vcproj", env=os.environ)
+        
+        if libpack.toolchain == "vc12":
+            utils.run_shell("configure -opensource -confirm-license "
+                            "-platform win32-msvc2012 "
+                            "-debug-and-release -mp -no-qt3support "
+                            "-no-phonon -no-multimedia -no-declarative-debug "
+                            "-nomake tests -nomake examples -nomake demos "
+                            "-nomake docs -no-vcproj", env=os.environ)
+        else:
+            utils.run_shell("configure -opensource -confirm-license "
+                            "-debug-and-release -mp -no-qt3support "
+                            "-no-phonon -no-multimedia -no-declarative-debug "
+                            "-nomake tests -nomake examples -nomake demos "
+                            "-nomake docs -no-vcproj", env=os.environ)
+
         utils.run_cmd("nmake")
 
     

@@ -6,6 +6,7 @@ version = "2014"
 source = {"type":"archive", "url":"http://www.netlib.org/cgi-bin"\
           "/netlibfiles.pl?format=zip&filename=/f2c/libf2c.zip"}
 depends_on = []
+patches = []
 
 def download_f2csrc_http(outdir):
     url = "http://www.netlib.org/f2c/src/"

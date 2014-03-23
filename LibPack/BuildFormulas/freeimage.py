@@ -6,6 +6,7 @@ version = "3.15.4"
 source = {"type":"archive", "url":
           "http://downloads.sourceforge.net/freeimage/FreeImage3154.zip"}
 depends_on = []
+patches = ["freeimage_algorithm"]
     
 def build(libpack):
     utils.shutil.copy(os.path.join(os.path.dirname(__file__),
@@ -21,26 +22,23 @@ def build(libpack):
                                "tmp_install")
     
     if libpack.toolchain.startswith("vc"):
-        if libpack.toolchain == "vc9":
-            utils.run_cmd("cmake", ["-D","CMAKE_INSTALL_PREFIX=" + tmp_install,
-                          "-G", "Visual Studio 9 2008", ".."])
-            
-            print("\nBuilding release...\n")
-            utils.run_cmd("vcbuild", ["FreeImage.sln", "Release|Win32"])
-            
-            print("\nBuilding debug...\n")
-            utils.run_cmd("vcbuild", ["FreeImage.sln", "Debug|Win32"])
-        else:
-            print(libpack.toolchain + " is not supported for " + name)
+        utils.run_cmd("cmake", ["-D","CMAKE_INSTALL_PREFIX=" + tmp_install,
+                          "-G", libpack.cmake_generator, ".."])
+
+        print("\nBuilding release...\n")
+        libpack.vcbuild("FreeImage.sln", "Release", "Win32")
+                                                    
+        print("\nBuilding debug...\n")
+        libpack.vcbuild("FreeImage.sln", "Debug", "Win32")
+                    
     
 def install(libpack):
     tmp_install = os.path.join(libpack.config.get("Paths", "workspace"),
                                "tmp_install")
     
     if libpack.toolchain.startswith("vc"):
-        if libpack.toolchain == "vc9":
-            utils.run_cmd("vcbuild", ["INSTALL.vcproj", "Release|Win32"])
-            utils.run_cmd("vcbuild", ["INSTALL.vcproj", "Debug|Win32"])
+        libpack.vcbuild("INSTALL" + libpack.cmake_projext, "Release", "Win32")
+        libpack.vcbuild("INSTALL" + libpack.cmake_projext, "Debug", "Win32")
             
     files = utils.move(os.path.join(tmp_install, "include"),
                        libpack.path, "include", root=False)
