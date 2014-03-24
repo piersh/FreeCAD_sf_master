@@ -12,7 +12,8 @@ def build(libpack):
 
     if libpack.toolchain.startswith("vc"):
     
-        old_dir = os.chdir("build\\msvc9")
+        old_dir = os.getcwd()
+        os.chdir("build\\msvc9")
 
         vcproj = "coin3.vcproj"
 

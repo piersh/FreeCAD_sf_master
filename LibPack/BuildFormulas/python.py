@@ -13,7 +13,8 @@ def build(libpack):
     
     if libpack.toolchain.startswith("vc"):
 
-        old_dir = os.chdir("PCbuild")
+        old_dir = os.getcwd()
+        os.chdir("PCbuild")
 
         if libpack.toolchain == "vc12":
             if utils.check_update("python.vcproj", "python.vcxproj"):
@@ -36,7 +37,6 @@ def build(libpack):
             print(e)
 
         os.chdir(old_dir)
-        
 
     
 def install(libpack): 
