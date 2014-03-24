@@ -7,7 +7,7 @@ version = "2.7.6"
 source = {"type":"archive", "url":
           "http://www.python.org/ftp/python/2.7.6/Python-2.7.6.tgz"}
 depends_on = []
-patches = ["python_pyconfig.diff"]
+patches = ["python_pyconfig", "python_pyconfig2"]
 
 def build(libpack):
     
