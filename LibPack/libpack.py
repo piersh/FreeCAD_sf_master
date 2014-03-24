@@ -233,11 +233,11 @@ class LibPack:
 
         return row != None
     
-    def install(self, name):
+    def install(self, name, force=False):
         if not self.exists:
             raise LibPackError("Config [LibPack] 'path' not set (have you run 'new'?)")
 
-        if False and self.is_installed(name):
+        if not force and self.is_installed(name):
             print(name + " is already installed")
             return
 
@@ -469,10 +469,16 @@ def on_new(parser, options, args):
     LIBPACK.new(args[0], options.arch)
 
 def on_install(parser, options, args):
+
+    if options.install_all:
+        import BuildFormulas
+        LIBPACK._load_build_formulas(BuildFormulas)
+        args = LIBPACK._build_formulas
+    
     if not args:
         parser.error("no formula specified")
     for n in args:
-        LIBPACK.install(n)
+        LIBPACK.install(n, force=options.force_install)
 
 def on_uninstall(parser, options, args):
     if not args:
@@ -498,6 +504,14 @@ def setup_parser(parser):
     help = "Install a library into the LibPack"
     parser.add_subcommand("install", callback=on_install,
                           usage=usage.format("install","FORMULA"),short_help=help)
+
+    parser.add_option("-A", subcmd="install", dest="install_all", action="store_true",
+                      help="Build all formulae")
+
+    parser.add_option("-f", "--force", subcmd="install", dest="force_install", action="store_true",
+                      help="Force building formulae")
+    
+
     help = "Remove a library from the LibPack"
     parser.add_subcommand("uninstall", callback=on_uninstall,
                           usage=usage.format("uninstall","FORMULA"),short_help=help)
