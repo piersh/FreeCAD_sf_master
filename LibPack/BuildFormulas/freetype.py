@@ -7,43 +7,43 @@ source = {"type":"archive", "url":
           "http://sourceforge.net/projects/freetype/files/freetype2/2.5.2/ft252.zip"}
 depends_on = []
 patches = ["freetype_dll_export"]
-    
+
 def build(libpack):
     utils.shutil.copy(os.path.join(os.path.dirname(__file__),
-                      "..\\patches\\freetype_CMakeLists.txt"),
+                                   "..\\patches\\freetype_CMakeLists.txt"),
                       "CMakeLists.txt")
-    
+
     if not os.path.exists("cmake_build"):
         os.mkdir("cmake_build")
 
     os.chdir("cmake_build")
-    
+
     tmp_install = os.path.join(libpack.config.get("Paths", "workspace"),
                                "tmp_install")
 
     if libpack.toolchain.startswith("vc"):
-            
+
         utils.run_cmd("cmake", ["-D", "CMAKE_INSTALL_PREFIX=" + tmp_install, 
                                 "-G", libpack.cmake_generator, ".."])
-            
+
         print("\nBuilding release...\n")
         libpack.vcbuild("freetype.sln", "Release", "Win32")
 
         print("\nBuilding debug...\n")
         libpack.vcbuild("freetype.sln", "Debug", "Win32")
-    
+
 def install(libpack):
     tmp_install = os.path.join(libpack.config.get("Paths", "workspace"),
                                "tmp_install")
-    
+
     if libpack.toolchain.startswith("vc"):
         if libpack.toolchain == "vc9" or libpack.toolchain == "vc12":
-			libpack.vcbuild("INSTALL" + libpack.cmake_projext, "Release", "Win32")
-			libpack.vcbuild("INSTALL" + libpack.cmake_projext, "Debug", "Win32")
-            
+            libpack.vcbuild("INSTALL" + libpack.cmake_projext, "Release", "Win32")
+            libpack.vcbuild("INSTALL" + libpack.cmake_projext, "Debug", "Win32")
+
     files = utils.move(os.path.join(tmp_install, "include\\freetype2"),
                        libpack.path, "include")
-    
+
     files.extend(utils.move(os.path.join(tmp_install, "lib"),
                             libpack.path, "lib", root=False))
     files.extend(utils.move(os.path.join(tmp_install, "bin"),
