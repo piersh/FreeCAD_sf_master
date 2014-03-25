@@ -43,7 +43,7 @@ def install(libpack):
                                "tmp_install")
 
     if libpack.toolchain.startswith("vc"):
-        libpack.vcbuild("INSTALL" + libpack.cmake_projext, "Debua", "Win32")
+        libpack.vcbuild("INSTALL" + libpack.cmake_projext, "Debug", "Win32")
         libpack.vcbuild("INSTALL" + libpack.cmake_projext, "Release", "Win32")
 
     files = utils.move(os.path.join(tmp_install, "include", "shiboken"),
