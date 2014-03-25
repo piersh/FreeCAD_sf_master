@@ -46,11 +46,16 @@ def build(libpack):
                 + "\\ext_libs\\" + tcl_dirname + "\\include;"
         os.environ["INCLUDE"] = os.environ["INCLUDE"] + tcl_include
 
+
+        use_env = "/useenv"
+        if libpack.toolchain == "vc12":
+            use_env = "/p:UseEnv=true"
+
         print("\nBuilding release...\n")
-        libpack.vcbuild("windows\\nglib.sln", "Release(OCC)", "Win32", ["/useenv"])
+        libpack.vcbuild("windows\\nglib.sln", "Release(OCC)", "Win32", [use_env])
 
         print("\nBuilding debug...\n")
-        libpack.vcbuild("windows\\nglib.sln", "Debug(OCC)", "Win32", ["/useenv"])
+        libpack.vcbuild("windows\\nglib.sln", "Debug", "Win32", [use_env])
 
 def install(libpack):
     files = utils.copyfiles(["nglib\\nglib.h"], libpack.path, "include")
