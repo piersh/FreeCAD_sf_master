@@ -39,6 +39,8 @@ def build(libpack):
     if libpack.toolchain.startswith("vc"):
         utils.apply_patch(os.path.join(os.path.dirname(__file__),
                                        "..\\patches\\f2c_ssize_t.diff"))
+        utils.apply_patch(os.path.join(os.path.dirname(__file__),
+                                       "..\\patches\\f2c_makefile.diff"))
 
         os.chdir("src")
         print("\nBuilding f2c.exe...\n")

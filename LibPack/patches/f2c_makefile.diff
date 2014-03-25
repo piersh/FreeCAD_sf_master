@@ -1,0 +1,11 @@
+--- libf2c\makefile.vc	Fri Jan  2 22:08:42 2009
++++ libf2c\makefile_new.vc	Tue Mar 11 22:39:02 2014
+@@ -6,7 +6,7 @@
+ # to the objects in the "w =" list below.
+ 
+ CC = cl
+-CFLAGS = -DUSE_CLOCK -DMSDOS -DNO_ONEXIT -Ot1 -DNO_My_ctype -DNO_ISATTY
++CFLAGS = -DUSE_CLOCK -DMSDOS -DNO_ONEXIT -DNON_POSIX_STDIO -Ot1 -DNO_My_ctype -DNO_ISATTY /MD
+ 
+ .c.obj:
+ 	$(CC) -c $(CFLAGS) $*.c
