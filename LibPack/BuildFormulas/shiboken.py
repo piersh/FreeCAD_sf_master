@@ -7,7 +7,8 @@ source = {"type":"archive", "url":
           "http://download.qt-project.org/official_releases/pyside"\
           "/shiboken-1.2.1.tar.bz2"}
 depends_on = ["python", "qt"]
-patches = ["shiboken_d_suffix", "shiboken_rel_path1", "shiboken_rel_path2"]
+patches = ["shiboken_d_suffix", "shiboken_rel_path1", "shiboken_rel_path2",
+           "shiboken_vc12fix"]
 
 def build(libpack):
     if not os.path.exists("cmake_build"):
@@ -30,6 +31,7 @@ def build(libpack):
                                 "-D", "PYTHON_SITE_PACKAGES="+tmp_install + "\\bin",
                                 "-D", "BUILD_TESTS=OFF"
                                 "-D", "CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=.",
+                                "-D", "CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG=.",
                                 "-G", libpack.cmake_generator, ".."])
 
         print("\nBuilding debug...\n")
