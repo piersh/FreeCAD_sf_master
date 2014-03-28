@@ -6,7 +6,7 @@ name = "netgen"
 version = "5.1"
 source = {"type":"archive",
           "url":"http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/{0}/netgen-{0}.tar.gz".format(version)}
-depends_on = ["oce", "tcl", "tk", "pthreads"]
+depends_on = ["oce", "tcl", "tk", "pthreads", "zlib"]
 patches = ["netgen_vcproj", "netgen_occ67_1", "netgen_occ67_2",
            "netgen_occ67_3", "netgen_dllexport1", "netgen_dllexport2",
            "netgen_dllexport3", "netgen_dllexport4"]
