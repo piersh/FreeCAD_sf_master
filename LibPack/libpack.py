@@ -232,6 +232,24 @@ class LibPack:
         conn.close()
 
         return row != None
+
+    def get_formula(self, name):
+
+        if self._build_formulas == {}:
+            import BuildFormulas
+            self._load_build_formulas(BuildFormulas)
+            
+        return self._build_formulas[name]
+
+    def get_formula_dir(self, name):
+
+        formula = self.get_formula(name)
+
+        return os.path.join(self.config.get("Paths", "workspace"),
+                            formula.name + "-" + formula.version)
+
+
+        
     
     def install(self, name, force=False):
         if not self.exists:
@@ -241,12 +259,8 @@ class LibPack:
             print(name + " is already installed")
             return
 
-        if self._build_formulas == {}:
-            import BuildFormulas
-            self._load_build_formulas(BuildFormulas)
-            
         try:
-            formula = self._build_formulas[name]
+            formula = self.get_formula(name)
         except KeyError:
             raise LibPackError("No build formula found for " + name)
 
