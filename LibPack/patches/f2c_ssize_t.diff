@@ -1,5 +1,5 @@
---- libf2c\comptry.bat Tue May 12 06:11:16 1998
-+++ libf2c\comptry_new.bat Fri Mar 28 18:50:58 2014
+--- libf2c\comptry.bat	Tue May 12 06:11:16 1998
++++ libf2c\comptry_new.bat	Fri Mar 28 18:50:58 2014
 @@ -1,5 +1,7 @@
 -%1 %2 %3 %4 %5 %6 %7 %8 %9
 -if errorlevel 1 goto nolonglong
