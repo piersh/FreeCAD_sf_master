@@ -24,21 +24,18 @@ def build(libpack):
 
         os.chdir("windows")
 
-        if libpack.toolchain == "vc12":
-
-            if utils.check_update("nglib.vcproj", "nglib.vcxproj"):
-                utils.run_cmd("devenv", ["/upgrade", "nglib.sln"])
-
-
+        vcproj = "nglib.vcproj"
         use_env = "/useenv"
+
         if libpack.toolchain == "vc12":
+            vcproj = libpack.upgrade_vcproj("nglib")
             use_env = "/p:UseEnv=true"
 
         print("\nBuilding release...\n")
-        libpack.vcbuild("nglib.sln", "Release(OCC)", "Win32", [use_env])
+        libpack.vcbuild(vcproj, "Release(OCC)", "Win32", [use_env])
 
         print("\nBuilding debug...\n")
-        libpack.vcbuild("nglib.sln", "Debug", "Win32", [use_env])
+        libpack.vcbuild(vcproj, "Debug", "Win32", [use_env])
 
 
 def install(libpack):

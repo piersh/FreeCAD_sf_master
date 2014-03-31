@@ -17,10 +17,7 @@ def build(libpack):
         vcproj = "soqt1.vcproj"
 
         if libpack.toolchain == "vc12":
-            if utils.check_update(vcproj, "soqt1.vcxproj"):
-                utils.run_cmd("devenv", ["/upgrade", "soqt1.sln"])
-
-            vcproj = "soqt1.vcxproj"
+            vcproj = libpack.upgrade_vcproj("soqt1")
 
         os.environ["QTDIR"] = libpack.path
         os.environ["COINDIR"] = libpack.path

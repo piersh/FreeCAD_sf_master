@@ -17,12 +17,7 @@ def build(libpack):
         vcproj = "coin3.vcproj"
 
         if libpack.toolchain == "vc12":
-
-            if utils.check_update(vcproj, "coin3.vcxproj"):
-                utils.run_cmd("devenv", ["/upgrade", "coin3.sln"])
-
-            vcproj = "coin3.vcxproj"
-
+            vcproj = libpack.upgrade_vcproj("coin3")
 
         print("\nBuilding release...\n")
         libpack.vcbuild(vcproj, "DLL (Release)", "Win32")
