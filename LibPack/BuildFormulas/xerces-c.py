@@ -6,7 +6,7 @@ name = "xerces-c"
 version = "3.1.1"
 source = {"type":"archive", "url":
           "http://mirror.reverse.net/pub/apache//xerces/c/3/sources"\
-          "/xerces-c-3.1.1.zip"}
+          "/xerces-c-{0}.zip".format(version)}
 depends_on = []
 patches = []
 

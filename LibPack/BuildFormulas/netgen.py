@@ -22,7 +22,6 @@ def build(libpack):
         os.environ["INCLUDE"] = os.environ["INCLUDE"] + libpack.path + "\\include\\oce;"
         os.environ["LIB"] = os.environ["LIB"] + libpack.path + "\\lib;"
 
-        old_dir = os.getcwd()
         os.chdir("windows")
 
         if libpack.toolchain == "vc12":
@@ -41,8 +40,6 @@ def build(libpack):
         print("\nBuilding debug...\n")
         libpack.vcbuild("nglib.sln", "Debug", "Win32", [use_env])
 
-
-        os.chdir(old_dir)
 
 def install(libpack):
     files = utils.copyfiles(["nglib\\nglib.h"], libpack.path, "include")

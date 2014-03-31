@@ -303,13 +303,25 @@ class LibPack:
                         #    exit(1)
             
             old_cwd = os.getcwd()
-            os.chdir(src_dir)
+
+            self.tmp_install = tmp_install = os.path.join(self.config.get("Paths", "workspace"),
+                                            "tmp_install")
+            if os.path.exists(tmp_install):
+                utils.rmtree(tmp_install)
+
+            os.mkdir(tmp_install)
+
+            backup_environ = dict(os.environ)
 
             try:
                 print("Building {0}...\n".format(name))
+                os.chdir(src_dir)
                 formula.build(self)
+
                 print("Installing {0}...\n".format(name))
+                os.chdir(src_dir)
                 formula.install(self)
+
                 print("Successfully installed {0}\n".format(name))
             except CalledProcessError as e:
                 print(e)
@@ -317,6 +329,10 @@ class LibPack:
                 utils.run_cmd("cmd")
             
             os.chdir(old_cwd)
+            utils.rmtree(tmp_install)
+
+            os.environ.clear()
+            os.environ.update(backup_environ)
         
 
     def uninstall(self, name):
@@ -335,9 +351,11 @@ class LibPack:
     def vcbuild(self, proj, config, platform, extras=[]):
         if self.toolchain.startswith("vc"):
             if self.toolchain == "vc9":
-        	utils.run_cmd("vcbuild", [proj, "{0}|{1}".format(config, platform)] + extras)
+                utils.run_cmd("vcbuild", [proj, "{0}|{1}".format(config, platform)] + extras)
             elif self.toolchain == "vc12":
-        	utils.run_cmd("msbuild", [proj, "/p:Configuration=" + config, "/p:Platform=" + platform] + extras)
+                utils.run_cmd("msbuild", [proj, "/m", "/nologo", "/verbosity:minimal",
+                                          "/p:Configuration=" + config,
+                                          "/p:Platform=" + platform] + extras)
         else:
             self.error("unsupported toolchain " + toolchain)
 
