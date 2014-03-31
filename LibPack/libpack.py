@@ -305,7 +305,7 @@ class LibPack:
             old_cwd = os.getcwd()
 
             self.tmp_install = tmp_install = os.path.join(self.config.get("Paths", "workspace"),
-                                            "tmp_install")
+                                            "tmp_install_" + name)
             if os.path.exists(tmp_install):
                 utils.rmtree(tmp_install)
 
@@ -358,6 +358,19 @@ class LibPack:
                                           "/p:Platform=" + platform] + extras)
         else:
             self.error("unsupported toolchain " + toolchain)
+
+    def upgrade_vcproj(self, name):
+
+        if name.endswith(".vcproj"):
+            name = name[:-len(".vcproj")]
+
+        old_name = name + ".vcproj"
+        new_name = name + ".vcxproj"
+
+        if utils.check_update(old_name, new_name):
+            utils.run_cmd("vcupgrade", ["-overwrite", "-nologo", old_name])
+
+        return new_name
 
 
 class CustomHelpFormatter(optparse.IndentedHelpFormatter):
