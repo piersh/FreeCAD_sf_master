@@ -83,18 +83,18 @@ def setup_env(toolchain, arch):
     
     if toolchain.startswith("vc"):
         #trimming "vc" gets the version
-	vs_ver = toolchain[2:]
+        vs_ver = toolchain[2:]
         vs_dir = "Microsoft Visual Studio {0}.0".format(vs_ver)
         env_pattern = "C:\\{0}\\{1}\\VC\\vcvarsall.bat"
 
-	env_bat = None
+        env_bat = None
 
-	comntools = os.environ["VS{0}0COMNTOOLS".format(vs_ver)]
-	if comntools and os.path.exists("{0}vsvars32.bat".format(comntools)):
-	    env_bat = "{0}vsvars32.bat".format(comntools)
+        comntools = os.environ["VS{0}0COMNTOOLS".format(vs_ver)]
+        if comntools and os.path.exists("{0}vsvars32.bat".format(comntools)):
+            env_bat = "{0}vsvars32.bat".format(comntools)
 
-	if not env_bat and comntools and os.path.exists("{0}vcvarsall.bat".format(comntools)):
-	    env_bat = "{0}vcvarsall.bat".format(comntools)
+        if not env_bat and comntools and os.path.exists("{0}vcvarsall.bat".format(comntools)):
+            env_bat = "{0}vcvarsall.bat".format(comntools)
 
         if not env_bat and os.path.exists(env_pattern.format("Program Files (x86)", vs_dir)):
             env_bat = env_pattern.format("Program Files (x86)", vs_dir)
@@ -102,7 +102,7 @@ def setup_env(toolchain, arch):
         if not env_bat and os.path.exists(env_pattern.format("Program Files", vs_dir)):
             env_bat = env_pattern.format("Program Files", vs_dir)
 
-	if not env_bat:
+        if not env_bat:
             raise ValueError("Could not find vcvarsall.bat for " + toolchain)
             
         if arch == "x64":
@@ -190,7 +190,7 @@ def ignore_names_inverse(patterns, dir_filter=["*"]):
     Only include directories that don't match a pattern in dir_filter. 
     """
     def _ignore_function(path, names):
-	include_names = filter_multi(names, patterns)
+        include_names = filter_multi(names, patterns)
         exclude_dirs = filter_multi(names, dir_filter)
         ignore_names = set()
         for n in names:
